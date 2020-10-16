@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Algorithm {
+public class Main {
 	private static int N, M;
 	private static int[][] array, dp;
 
@@ -35,6 +35,7 @@ public class Algorithm {
 	private static int bfs(int a, int b) {
 		// base case
 		if (a == M - 1 && b == N - 1)	return 1;
+		// 이미 지나온 길이면 return으로 해당 index의 값을 리턴해준다. 이렇게 함으로써 왔던길을 가지않아도 됌.
 		if(dp[a][b] != -1)	 return dp[a][b];
 		dp[a][b] = 0;
 		
@@ -43,8 +44,9 @@ public class Algorithm {
 			int c = b + direction[1];
 
 			if (r >= 0 && c >= 0 && r < M && c < N) {
-				// 값이 작아질때만 queue에 추가
+				// 작아질 때만 재귀로 들어감
 				if (array[a][b] > array[r][c]) {
+					// 재귀를 돌면서 해당 index 방향에서 끝까지 도달한 횟수를 누적해서 index에 더 해줌
 					dp[a][b] += bfs(r, c);
 					
 				}
