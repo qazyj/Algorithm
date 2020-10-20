@@ -3,43 +3,40 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Algorithm {
+public class Main {
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
+
 		int n = Integer.parseInt(br.readLine());
 		int[] array = new int[n];
-		
+
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < n; ++i) {
 			array[i] = Integer.parseInt(st.nextToken());
 		}
- 
+		Arrays.sort(array);
+
 		int min = Integer.MAX_VALUE;
 		int value1 = 0, value2 = 0;
-		for (int i = 0; i < n; ++i) {
-			int a = i+1, b = n-1;
-			// i+1부터 n-1까지 이진 탐색
-			while (a <= b) {
-				int mid = (a+b)/2;
-				int value = Math.abs(array[i] + array[mid]);
-				
-				// v가 최소일 때 특성값 갱신
-				if (min > value) {
-					min = value;
-					value1 = array[i];
-					value2 = array[mid];
-				}
-				
-				if (array[mid] == -array[i]) {
-					break;
-				} else if (array[mid] < -array[i]) {
-					a = mid+1;
-				} else {
-					b = mid-1;
-				}
+		int left = 0, right = n - 1;
+		
+		// 이진 탐색
+		while (left < right) {
+			int sum = array[left] + array[right];
+
+			// v가 최소일 때 특성값 갱신
+			if (min > Math.abs(sum)) {
+				min = Math.abs(sum);
+				value1 = array[left];
+				value2 = array[right];
 			}
+
+			if (sum > 0)
+				right--;
+			else
+				left++;
 		}
+
 		System.out.println(value1 + " " + value2);
 	}
 }
