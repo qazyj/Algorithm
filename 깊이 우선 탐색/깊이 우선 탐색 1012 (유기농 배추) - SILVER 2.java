@@ -1,25 +1,29 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main {
+// https://qazyj.tistory.com/71
 
-	static int[][] array;
-	static boolean[][] check;
+public class Main {
+	static int M, N;
 	static int[] x = { -1, 1, 0, 0 };
 	static int[] y = { 0, 0, -1, 1 };
-	static int M;
-	static int N;
-
-	public static void main(String args[]) throws IOException {
+	static int[][] array;
+	static boolean[][] check;
+	static StringBuilder sb;
+	
+	public static void main(String[] args) throws Exception {
+		SetData();
+		System.out.println(sb);
+	}
+	
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
+		
+		sb = new StringBuilder();
 		int testCase = Integer.parseInt(br.readLine());
-		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < testCase; i++) {
 			StringTokenizer st = new StringTokenizer(br.readLine());
@@ -28,11 +32,10 @@ public class Main {
 			int K = Integer.parseInt(st.nextToken());
 			array = new int[M][N];
 			check = new boolean[M][N];
+			
 			for (int j = 0; j < K; j++) {
 				st = new StringTokenizer(br.readLine());
-				int x = Integer.parseInt(st.nextToken());
-				int y = Integer.parseInt(st.nextToken());
-				array[x][y] = 1;
+				array[Integer.parseInt(st.nextToken())][Integer.parseInt(st.nextToken())] = 1;
 			}
 
 			int count = 0;
@@ -48,10 +51,8 @@ public class Main {
 			
 			sb.append(count + "\n");
 		}
-		
-		System.out.print(sb);
 	}
-
+	
 	private static void bfs(int a, int b) {
 		Queue<int[]> queue = new LinkedList<>();
 		queue.offer(new int[] { a, b });
@@ -72,5 +73,4 @@ public class Main {
 			}
 		}
 	}
-
 }
