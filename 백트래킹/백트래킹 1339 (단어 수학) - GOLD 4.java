@@ -1,26 +1,38 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+// https://qazyj.tistory.com/80
 
 public class Main {
-	public static void main(String[] args) throws IOException {
+	static int answer;
+
+	public static void main(String[] args) throws Exception {
+		SetData();
+		System.out.println(answer);
+	}
+	
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int []number = new int[26];
 		
 		int N = Integer.parseInt(br.readLine());
-		for(int i = 0; i < N; i++) {
-			String temp = br.readLine();
-			int tmp = 0;
-			for(int j = temp.length()-1; j >= 0 ;j--) {
-				number[temp.charAt(j) - 'A'] += Math.pow(10,tmp++);
-			}			
-		}
-		Arrays.sort(number);
+		answer = 0;
+		int[] array = new int[26];
 		
-		int result = 0, num=9;
-		for(int i = 25; i >= 0; i--) {
-			if(number[i]==0) break;
-			result+=number[i]*num--;
+		for(int i = 0; i < N; i++) {
+			String s = br.readLine();
+			int temp = 1;
+			for(int j = s.length() - 1; j >= 0; j--) {
+				array[s.charAt(j) - 'A'] += temp;
+				temp *= 10;
+			}
 		}
-		System.out.println(result);		
-    }
+		
+		Arrays.sort(array);
+		int temp = 25;
+		for(int i = 9; i >= 1; i--) {
+			answer += array[temp--]*i;
+		}
+	}
+	
 }
