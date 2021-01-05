@@ -1,21 +1,30 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String args[]) {
-    	Scanner scanner = new Scanner(System.in);
-        
-    	int X = scanner.nextInt();     //정수 값 받아옴
-    	int[] array = new int[X+1];	    //받아온 정수만큼 크기의 배열 생성
-    	
-    	for(int i = 2; i<=X;i++) {
-    		if (i%3==0) 
-    			array[i] = Math.min(array[i-1], array[i/3])+1;
-    		else if (i%2==0) 
-    			array[i] = Math.min(array[i-1],  array[i/2])+1;
-    		else
-    			array[i] = array[i-1] + 1;
-    	}
-    	System.out.println(array[X]);
+	static int X;
+	static int[] array;
+
+	public static void main(String[] args) throws Exception {
+		SetData();
+		System.out.println(array[X]);
+	}
+
+	private static void SetData() throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+		X = Integer.parseInt(br.readLine());
+		array = new int[X + 1];
 		
+		for (int i = 2; i <= X; i++) {
+			array[i] = array[i - 1] + 1;
+			if (i % 2 == 0)
+				array[i] = Math.min(array[i], array[i / 2] + 1);
+			if (i % 3 == 0)
+				array[i] = Math.min(array[i], array[i / 3] + 1);
+		}
 	}
 }
