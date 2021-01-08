@@ -2,11 +2,15 @@ import java.io.*;
 import java.util.*;
 
 public class Algorithm {
-
 	static int[][] array;
 	static StringBuilder sb;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		SetData();
+		dfs(0, 0);
+	}
+
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		array = new int[9][9];
 		sb = new StringBuilder();
@@ -16,44 +20,40 @@ public class Algorithm {
 			for (int j = 0; j < 9; j++)
 				array[i][j] = s.charAt(j) - '0';
 		}
-
-		Sudoku(0, 0);
-
 	}
 
-	static void Sudoku(int r, int c) {
+	static void dfs(int r, int c) {
 
 		if (c == 9) {
-			sb.append("\n");
-			Sudoku(r + 1, 0);
+			dfs(r + 1, 0);
 			return;
 		}
 
 		if (r == 9) {
 			for (int i = 0; i < 9; i++) {
 				for (int j = 0; j < 9; j++) {
-					System.out.print(array[i][j]);
+					sb.append(array[i][j]);
 				}
-				System.out.println("");
+				sb.append("\n");
 			}
-			System.exit(0);
+			System.out.println(sb);
+			System.exit(0); // 이렇게 바로 끝내줘야지 시간초과가 나지 않음
 		}
 
 		if (array[r][c] == 0) {
 			for (int i = 1; i <= 9; i++) {
-				if (Possible(r, c, i)) {
+				if (Sudoku(r, c, i)) {
 					array[r][c] = i;
-					Sudoku(r, c + 1);
+					dfs(r, c + 1);
 				}
 				array[r][c] = 0;
 			}
 		} else {
-			Sudoku(r, c + 1);
+			dfs(r, c + 1);
 		}
 	}
 
-	static boolean Possible(int r, int c, int value) {
-
+	static boolean Sudoku(int r, int c, int value) {
 		// 행
 		for (int i = 0; i < 9; i++) {
 			if (array[r][i] == value) {
@@ -82,5 +82,4 @@ public class Algorithm {
 
 		return true;
 	}
-
 }
