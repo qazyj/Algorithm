@@ -6,20 +6,23 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Algorithm {
-
 	static int[][] array;
 	static boolean[][] check;
     static int[] x = {0,0,1,-1,-1,1,1,-1};
     static int[] y = {1,-1,0,0,1,1,-1,-1};
-	static int M;
-	static int N;
+	static int N,M;
+	static StringBuilder sb;
 
-	public static void main(String args[]) throws IOException {
+	public static void main(String args[]) throws Exception {
+		SetData();
+		System.out.print(sb);
+	}
+	
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-		StringBuilder sb = new StringBuilder();
-
+		sb = new StringBuilder();
 		StringTokenizer st = new StringTokenizer(br.readLine());
+		
 		M = Integer.parseInt(st.nextToken());
 		N = Integer.parseInt(st.nextToken());
 		while(M != 0 && N != 0) {
@@ -49,8 +52,6 @@ public class Algorithm {
 			
 			sb.append(count + "\n");
 		}
-		
-		System.out.print(sb);
 	}
 
 	private static void bfs(int a, int b) {
