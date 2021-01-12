@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main{
-	private static int N, M, count = 0, min = Integer.MAX_VALUE;
+public class Algorithm {
+	private static int N, M, count, min;
 	private static int[][] array;
 	private static boolean[] check;
 	private static ArrayList<int[]> virus;
@@ -14,12 +14,19 @@ public class Main{
 	private static int[] y = { -1, 1, 0, 0 };
 
 	public static void main(String[] args) throws Exception {
+		SetData();
+		System.out.println(min);
+	}
+	
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		array = new int[N][N];
 		virus = new ArrayList<>();
+		min = Integer.MAX_VALUE;
+		count = 0;
 
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -38,10 +45,8 @@ public class Main{
 		else
 			min = 0;
 		
-		if(min != Integer.MAX_VALUE)
-			System.out.println(min);
-		else
-			System.out.println("-1");
+		if(min == Integer.MAX_VALUE)
+			min = -1;
 	}
 
 	private static void dfs(int start, int depth) {
