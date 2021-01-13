@@ -1,25 +1,28 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Main {
-
+public class Algorithm {
+	static int R, C, answer;
 	static int[][] array;
 	static boolean[][] check;
-	static int R, C;
 	static int[] x = { -1, 0, 1 };
 	static int[] y = { 1, 1, 1 };
+	
+	public static void main(String[] args) throws Exception {
+		// TODO Auto-generated method stub
+		SetData();
+		System.out.print(answer);
+	}
 
-    public static void main(String args[]) throws IOException {
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		R = Integer.parseInt(st.nextToken());
 		C = Integer.parseInt(st.nextToken());
+		answer = 0;
 
 		array = new int[R][C];
 		check = new boolean[R][C];
@@ -30,15 +33,12 @@ public class Main {
 				array[i][j] = s.charAt(j);
 			}
 		}
-		
-		int count = 0;
+	
 		for (int i = 0; i < R; i++) 
-			count += bfs(i, 0);
-
-		System.out.print(count);
+			answer += dfs(i, 0);
 	}
-
-	public static int bfs(int a, int b) {
+	
+	public static int dfs(int a, int b) {
 		if (b == C - 1) 
 			return 1;
 
@@ -49,7 +49,7 @@ public class Main {
 			if (r >= 0 && c >= 0 && r < R && c < C) {
 				if (array[r][c] == '.' && !check[r][c]) {
 					check[r][c] = true;
-					if(bfs(r, c) == 1) return 1;
+					if(dfs(r, c) == 1) return 1;
 				}
 			}
 		}
