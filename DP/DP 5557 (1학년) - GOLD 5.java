@@ -2,14 +2,22 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class Algorithm {
+public class Main {
+	static int N;
+	static long[][] dp;
+	static int[] array;
+	
     public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        SetData();
+        System.out.println(dp[N-2][array[N-1]]);
+    }
+	private static void SetData() throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
         
-        long[][] dp = new long[N][21];
-        int[] array = new int[N];
+        dp = new long[N][21];
+        array = new int[N];
         
         StringTokenizer st = new StringTokenizer(br.readLine());
         for(int i = 0; i < N; i++) {
@@ -29,7 +37,5 @@ public class Algorithm {
                 }
             }
         }
-        System.out.println(dp[N-2][array[N-1]]);
-        
-    }
+	}
 }
