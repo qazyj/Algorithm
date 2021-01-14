@@ -4,20 +4,28 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Algorithm {
-	static int N;
+	static int N, count, colorWeeknessCount;
 	static char[][] array;
 	static boolean[][] check;
-	static boolean colorWeakness = false;
+	static boolean colorWeakness;
 	static int[] x = { -1, 1, 0, 0 };
 	static int[] y = { 0, 0, -1, 1 };
 
 	public static void main(String[] args) throws Exception {
+		SetData();
+		System.out.print(count + " " + colorWeeknessCount);
+	}
+
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 		N = Integer.parseInt(br.readLine());
 
 		array = new char[N][N];
 		check = new boolean[N][N];
+		colorWeakness = false;
+		count = 0;
+		colorWeeknessCount = 0;
 
 		for (int i = 0; i < N; i++) {
 			String s = br.readLine();
@@ -26,7 +34,6 @@ public class Algorithm {
 			}
 		}
 
-		int count = 0, colorWeeknessCount = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				if (!check[i][j]) {
@@ -57,10 +64,8 @@ public class Algorithm {
 				}
 			}
 		}
-
-		System.out.print(count + " " + colorWeeknessCount);
 	}
-
+	
 	private static void bfs(int a, int b, char temp) {
 		Queue<int[]> queue = new LinkedList<>();
 		queue.offer(new int[] { a, b });
