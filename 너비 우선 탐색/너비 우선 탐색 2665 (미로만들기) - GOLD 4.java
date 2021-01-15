@@ -1,14 +1,21 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class Algorithm {
+public class Main {
+    static int N;
     static int[][] array;
     static int[][] check;
-    static int N;
     static int[] x = {-1, 1, 0, 0};
     static int[] y = {0, 0, -1, 1};
-
-    public static void main(String[] args) throws IOException {
+	
+    public static void main(String[] args) throws Exception {
+        SetData();
+        bfs(0, 0);
+        System.out.println(check[N-1][N-1]);
+    }
+	private static void SetData() throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         array = new int[N][N];
@@ -16,7 +23,7 @@ public class Algorithm {
 
         for(int i=0; i<N; i++) {
             for(int j=0; j<N; j++) {
-                check[i][j]=2100000000;
+                check[i][j]=Integer.MAX_VALUE;
             }
         }
 
@@ -26,10 +33,8 @@ public class Algorithm {
                 array[i][j] = 1 - (input.charAt(j) - '0');
             }
         }
-        bfs(0, 0);
-        System.out.println(check[N-1][N-1]);
-    }
-
+	}
+	
     public static void bfs(int a, int b) {
         Queue<int[]> queue = new LinkedList<>();
         queue.offer(new int[] {a,b});
