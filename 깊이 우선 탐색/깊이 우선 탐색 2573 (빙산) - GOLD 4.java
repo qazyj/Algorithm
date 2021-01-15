@@ -5,18 +5,24 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Algorithm {
-	static int N, M;
+	static int N, M, answer;
 	static int[][] array;
+	static boolean[][] check;
 	static int[] x = { -1, 1, 0, 0 };
 	static int[] y = { 0, 0, -1, 1 };
-
-	public static void main(String[] args) throws Exception {
+	
+    public static void main(String[] args) throws Exception {
+        SetData();
+        System.out.println(answer);
+    }
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
-
+		answer = 0;
+		
 		array = new int[N][M];
 		for(int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -25,29 +31,26 @@ public class Algorithm {
 			}
 		}
 
-		int ans = 0, count = SeparateNumber();
-
-		while(count < 2) {
+		int count = 0;
+		while((count = SeparateNumber()) < 2) {
 			if (count == 0) {
-				ans = 0;
+				answer = 0;
 				break;
 			}
 
 			Melt();
-			ans++;
+			answer++;
 		}
-
-		System.out.println(ans);
 	}
-
+	
 	private static int SeparateNumber() {
-		boolean[][] check = new boolean[N][M];
+		check = new boolean[N][M];
 
 		int count = 0;
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < M; j++) {
 				if(array[i][j] != 0 && !check[i][j]) {
-					dfs(i, j, check);
+					dfs(i, j);
 					count++;
 				}
 			}
@@ -55,7 +58,7 @@ public class Algorithm {
 		return count;
 	}
 
-	private static void dfs(int a, int b, boolean[][] check) {
+	private static void dfs(int a, int b) {
 		check[a][b] = true;
 
 		for(int i = 0; i < 4; i++) {
@@ -64,7 +67,7 @@ public class Algorithm {
 
 			if(r >= 0 && c >= 0 && r < N && c < M) {
 				if(array[r][c] != 0 && !check[r][c]) {
-					dfs(r, c, check);
+					dfs(r, c);
 				}
 			}
 		}
@@ -72,7 +75,7 @@ public class Algorithm {
 
 	private static void Melt() {
 		Queue<int[]> queue = new LinkedList<>();
-		boolean[][] check = new boolean[N][M];
+		check = new boolean[N][M];
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < M; j++) {
 				if(array[i][j] != 0) {
