@@ -2,21 +2,31 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class Algorithm {
+public class Main {
+	static int answer, number;
+	static long[] array;
 
 	public static void main(String[] args) throws Exception {
+		SetData();
+		Calculate();
+		System.out.println(answer);
+	}
+
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
-		int number = Integer.parseInt(br.readLine());
-		long[] array = new long[number+1];
+		number = Integer.parseInt(br.readLine());
+		array = new long[number+1];
+		answer = 0;
 		
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		int index=1;
 		while(st.hasMoreTokens()) {
 			array[index++] = Long.parseLong(st.nextToken());
 		}
-		
-		int ans=0;
+	}
+	
+	private static void Calculate() {
 		for(int i = 1;i <= number;i++){
 			int temp=0;
 			
@@ -38,8 +48,7 @@ public class Algorithm {
 				}
 			}
 			
-			ans=Math.max(ans,temp);
+			answer=Math.max(answer,temp);
 		}
-	    System.out.println(ans);
 	}
 }
