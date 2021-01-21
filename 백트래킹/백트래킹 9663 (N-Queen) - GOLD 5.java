@@ -1,52 +1,37 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
-public class Main {
-	static boolean check[][];
-	static int result = 0, N;
+public class Algorithm {
+	static int N;
+    static boolean[] flagRow;
+    static boolean[] flagDiag1;
+    static boolean[] flagDiag2;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		SetData();
+		System.out.println(dfs(0));
+	}
+
+	private static void SetData() throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
 		N = Integer.parseInt(br.readLine());
-		check = new boolean[N][N];
-		dfs(0);
-		System.out.println(result);
+        flagRow = new boolean[N];
+        flagDiag1 = new boolean[2 * N - 1];
+        flagDiag2 = new boolean[2 * N - 1];
 	}
+	
+    private static int dfs(int depth) {
+        if (depth == N) return 1;
+        int sum = 0;
+        for (int i = 0; i < N; i++) {
+            if (!flagRow[i] && !flagDiag1[depth + i] && !flagDiag2[depth - i + N - 1]) {
+                flagRow[i] = flagDiag1[depth + i] = flagDiag2[depth - i + N - 1] = true;
+                sum += dfs(depth + 1);
+                flagRow[i] = flagDiag1[depth + i] = flagDiag2[depth - i + N - 1] = false;
 
-	static void dfs(int x) {
-		if(x == N) {
-			result++;
-			return;
-		}
-		for(int i = 0; i < N; i++) {
-			if(QueenCheck(x, i)) {
-				check[x][i] = true;
-				dfs(x + 1);
-				check[x][i] = false;
-			}
-		}
-	}
-
-	static boolean QueenCheck(int x, int y) {
-		
-		// 위로
-		for(int i = x; i >= 0; i--)
-			if(check[i][y])
-				return false;
-		
-		// 왼쪽 위로 대각선
-		int i = x - 1;
-		int j = y - 1;
-		while(i >= 0 && j >= 0)
-			if(check[i--][j--])
-				return false;
-		
-		// 오른쪽 위로 대각선
-		i = x - 1;
-		j = y + 1;
-		while(i >= 0 && j < N)
-			if(check[i--][j++])
-				return false;
-		
-		return true;
-	}
+            }
+        }
+        return sum;
+    }
 }
