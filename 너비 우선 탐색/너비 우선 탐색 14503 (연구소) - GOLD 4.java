@@ -1,96 +1,166 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
- 
-public class Algorithm {	
+
+public class Main {
 	static int[][] array;
-	static int N, M, max = 0;
+	static int N, M, answer;
     static int[] x = {-1, 1, 0, 0};
     static int[] y = {0, 0, -1, 1};
-	
-	public static void main(String[] args) throws IOException { 
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+	public static void main(String[] args) throws Exception {
+		SetData();	
+		blockArea();
+		System.out.println(answer);
+	}
+
+	// 데이터
+	private static void SetData() throws Exception  {
+		InputReader in = new InputReader(System.in);
 		
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		
+		N = in.readInt();
+		M = in.readInt();		
 		array = new int[N][M];
+		answer = 0;
 
 		for(int i = 0; i < N; i++) {
-			st = new StringTokenizer(br.readLine());
 			for(int j = 0; j < M; j++) 
-				array[i][j] = Integer.parseInt(st.nextToken());			
+				array[i][j] = in.readInt();			
 		}
-		
-		dfs(0);
-		System.out.println(max);
-
 	}
 	
-    // 벽 기둥 3개를 세우기 위한 함수
-	// DFS 재귀 형식
-    private static void dfs(int count) {
-    	// base case
-        if(count == 3) {
-            max = Math.max(max, bfs());
-            return;
-        }
-        
-        for(int i = 0; i < N; i++) {
-            for(int j = 0 ; j < M; j++) {
-                if(array[i][j] == 0) {
-                    array[i][j] = 1;
-					dfs(count+1);
-                    array[i][j] = 0;
-                }
-            }
-        }
-    }
-	
-	private static int bfs() {		
-		// 임시 배열 (기존 배열을 유지하기 위함)
-        int[][] spreadVirusArray = new int[N][M];
-        for(int i = 0; i < N; i++)
-            for(int j = 0; j < M; j++)
-            	spreadVirusArray[i][j] = array[i][j];
-        
-        Queue<int[]> queue = new LinkedList<>();
-        
-        // 바이러스 인 곳을 queue에 위치를 추가해줌.
-        for(int i = 0; i < N; i++)
-        	for(int j = 0; j < M; j++)
-        		if(spreadVirusArray[i][j] == 2) queue.add(new int[] {i,j});
-        
-        // 벽으로 보호되지 않은 곳은 virus를 퍼뜨림
-        // BFS
-        while(!queue.isEmpty()){
-            int location[] = queue.poll();
-
-            for(int direction = 0; direction < 4; direction++){
-                int r = location[0] + x[direction];
-                int c = location[1] + y[direction];
-
-                if(r >= 0 && c >= 0 && r < N && c < M) {
-                    if(spreadVirusArray[r][c] == 0) {
-                    	spreadVirusArray[r][c] = 2;
-                        queue.add(new int[] {r,c});
-                    }
-                }
-            }
-        }                
-        
-        // 바이러스가 퍼지지 않은 지역 수
-		int count = 0;
-		for(int i = 0; i < N; i++) {
-			for(int j = 0; j < M; j++)
-				if(spreadVirusArray[i][j] == 0) count++;
-		}
+	private static void blockArea() {
+		int totalArea = N*M;
 		
-        return count;
-    }
+		for (int first = 0; first < totalArea-2; first++) {
+			if (array[first/M][first%M]==0) {
+				array[first/M][first%M] = 1;
+			}else {	continue;}
+			
+			for (int second = first+1; second < totalArea-1; second++) {
+				if (array[second/M][second%M]==0) {
+					array[second/M][second%M] = 1;
+				}else {	continue;}
+				
+				for (int third = second+1; third < totalArea; third++) {
+					if (array[third/M][third%M]== 0) {
+						array[third/M][third%M] = 1;
+					}else {	continue;}
+					
+					updateAnswer();
+					
+					array[third/M][third%M] = 0;
+				}
+				array[second/M][second%M] = 0;
+			}
+			array[first/M][first%M] = 0;
+		}
+	}
+	
+	private static void updateAnswer() {
+		int result=0;
+		
+		for (int x = 0; x < N; x++) {
+			for (int y = 0; y < M; y++) {
+				if(array[x][y] == 2) {
+					DFS(x,y);
+				}
+			}
+		}
+
+		
+		for (int x = 0; x < N; x++) {
+			for (int y = 0; y < M; y++) {
+				if (array[x][y]==0) {
+					result++;
+				}else if (array[x][y] == 3) {
+					array[x][y]=0;
+				}
+			}
+		}
+
+		answer = Math.max(answer, result);		
+	}
+	
+	private static void DFS(int a, int b) {
+		int nx,ny;
+		for (int i = 0; i < 4; i++) {
+			nx = a+x[i];
+			ny = b+y[i];
+			if (isVaildPos(nx, ny) && array[nx][ny]==0) {
+				array[nx][ny]=3;
+				DFS(nx,ny);
+			}
+		}
+	}
+	
+	private static boolean isVaildPos(int x, int y) {
+		return (x>=0 && x<N && y>=0 && y <M);
+	}	
+    
+	private static class InputReader {
+		private InputStream stream;
+		private byte[] buf = new byte[1024];
+		private int curChar;
+		private int numChars;
+		private SpaceCharFilter filter;
+
+		public InputReader(InputStream stream) {
+			this.stream = stream;
+		}
+
+		public int read() {
+			if (numChars == -1) {
+				throw new InputMismatchException();
+			}
+			if (curChar >= numChars) {
+				curChar = 0;
+				try {
+					numChars = stream.read(buf);
+				} catch (IOException e) {
+					throw new InputMismatchException();
+				}
+				if (numChars <= 0) {
+					return -1;
+				}
+			}
+			return buf[curChar++];
+		}
+
+		public int readInt() {
+			int c = read();
+			while (isSpaceChar(c)) {
+				c = read();
+			}
+			int sgn = 1;
+			if (c == '-') {
+				sgn = -1;
+				c = read();
+			}
+			int res = 0;
+			do {
+				if (c < '0' || c > '9') {
+					throw new InputMismatchException();
+				}
+				res *= 10;
+				res += c - '0';
+				c = read();
+			} while (!isSpaceChar(c));
+			return res * sgn;
+		}
+
+		public boolean isSpaceChar(int c) {
+			if (filter != null) {
+				return filter.isSpaceChar(c);
+			}
+			return c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == -1;
+		}
+
+		public interface SpaceCharFilter {
+			public boolean isSpaceChar(int ch);
+		}
+	}
 }
