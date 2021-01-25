@@ -1,51 +1,115 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.InputMismatchException;
 
-public class Main {
+public class Algorithm {
 	static int[] array;
-	static int N, M, L;
+	static int N, M, L, answer;
 
 	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		L = Integer.parseInt(st.nextToken());
-
-		array = new int[N + 2];
-		array[0] = 0;
-		array[N + 1] = L;
-
-		st = new StringTokenizer(br.readLine());
-		for (int i = 1; i <= N; i++) {
-			array[i] = Integer.parseInt(st.nextToken());
-		}
-		Arrays.sort(array);
-
-		System.out.println(BinarySearch(0, L-1));
+		SetData();
+		BinarySearch(0, L - 1);
+		System.out.println(answer);
 	}
 
-	private static int BinarySearch(int left, int right) {
+	// 데이터
+	private static void SetData() throws Exception {
+		InputReader in = new InputReader(System.in);
+
+		N = in.readInt();
+		M = in.readInt();
+		L = in.readInt();
+
+		array = new int[N + 2];
+		array[N + 1] = L;
+
+		for (int i = 1; i <= N; i++)
+			array[i] = in.readInt();
+		Arrays.sort(array);
+	}
+
+	private static void BinarySearch(int left, int right) {
 		while (left <= right) {
 			int mid = (left + right) / 2;
-			int sum = 0;
-
-			for (int i = 1; i < N + 2; i++) {
-				if (array[i] > array[i - 1])
-					// 두 편의점 사이에 세울 수 있는 편의점 수
-					sum += (array[i] - array[i - 1] - 1) / mid;
-			}
-
-			// 세워야할 편의점 보다 더 많이 생기면 간격을 늘린다.
-			if (sum > M)
+			
+			if (isPossible(mid)) 
 				left = mid + 1;
-			else	// 더 적게 생기면 간격을 줄인다.
-				right = mid - 1;
+			else 
+				right = mid - 1;			
 		}
 
-		return left;
+		answer = left;
+	}
+
+	public static boolean isPossible(int mid) {
+		int sum = 0;
+		for (int i = 0; i < N + 1; i++) {
+			sum += (array[i + 1] - array[i] - 1) / mid;
+		}
+		return M < sum;
+	}
+	
+	private static class InputReader {
+		private InputStream stream;
+		private byte[] buf = new byte[1024];
+		private int curChar;
+		private int numChars;
+		private SpaceCharFilter filter;
+
+		public InputReader(InputStream stream) {
+			this.stream = stream;
+		}
+
+		public int read() {
+			if (numChars == -1) {
+				throw new InputMismatchException();
+			}
+			if (curChar >= numChars) {
+				curChar = 0;
+				try {
+					numChars = stream.read(buf);
+				} catch (IOException e) {
+					throw new InputMismatchException();
+				}
+				if (numChars <= 0) {
+					return -1;
+				}
+			}
+			return buf[curChar++];
+		}
+
+		public int readInt() {
+			int c = read();
+			while (isSpaceChar(c)) {
+				c = read();
+			}
+			int sgn = 1;
+			if (c == '-') {
+				sgn = -1;
+				c = read();
+			}
+			int res = 0;
+			do {
+				if (c < '0' || c > '9') {
+					throw new InputMismatchException();
+				}
+				res *= 10;
+				res += c - '0';
+				c = read();
+			} while (!isSpaceChar(c));
+			return res * sgn;
+		}
+
+		public boolean isSpaceChar(int c) {
+			if (filter != null) {
+				return filter.isSpaceChar(c);
+			}
+			return c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == -1;
+		}
+
+		public interface SpaceCharFilter {
+			public boolean isSpaceChar(int ch);
+		}
 	}
 }
