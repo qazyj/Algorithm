@@ -1,8 +1,8 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Algorithm {
     static int N, M, max;
@@ -14,7 +14,7 @@ public class Algorithm {
 	public static void main(String[] args) throws Exception {
 		SetData();
         bfs();
-
+        
         if (!check()) {
             System.out.println(-1);
         } else if(max==0){
@@ -24,41 +24,45 @@ public class Algorithm {
         }
 	}
 
+	// 데이터
 	private static void SetData() throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+		InputReader in = new InputReader(System.in);
+
+		N = in.readInt();		
+        M = in.readInt();
         array = new int[M][N];
         max = 0;
         queue = new LinkedList<>();
         for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
-                int M = Integer.parseInt(st.nextToken());
+                int M = in.readInt();
                 array[i][j] = M;
                 if (M == 1) {
                     queue.offer(new int[]{i, j});
                 }
             }
         }
+		
 	}
 
     static public void bfs() {
         while (!queue.isEmpty()) {
             int[] location = queue.poll();
-            for (int direction = 0; direction < 4; direction++) {
+            
+            for (int direction = 0; direction < 4; direction++) {            	
                 int r = location[0] + x[direction];
                 int c = location[1] + y[direction];
-                if (0 <= r && r < M && 0 <= c && c < N) {
-                    if (array[r][c] == 0) {
-                        array[r][c] = array[location[0]][location[1]] + 1;
-                        queue.offer(new int[]{r, c});
-                        if (array[r][c] > max) {
-                            max = array[r][c];
-                        }
+                
+                if (0 > r || r >= M || 0 > c || c >= N) continue;
+                
+                if (array[r][c] == 0) {
+                    array[r][c] = array[location[0]][location[1]] + 1;
+                    queue.offer(new int[]{r, c});
+                    if (array[r][c] > max) {
+                        max = array[r][c];
                     }
                 }
+                
             }
         }
     }
@@ -73,4 +77,67 @@ public class Algorithm {
         }
         return true;
     }
+	
+	private static class InputReader {
+		private InputStream stream;
+		private byte[] buf = new byte[1024];
+		private int curChar;
+		private int numChars;
+		private SpaceCharFilter filter;
+
+		public InputReader(InputStream stream) {
+			this.stream = stream;
+		}
+
+		public int read() {
+			if (numChars == -1) {
+				throw new InputMismatchException();
+			}
+			if (curChar >= numChars) {
+				curChar = 0;
+				try {
+					numChars = stream.read(buf);
+				} catch (IOException e) {
+					throw new InputMismatchException();
+				}
+				if (numChars <= 0) {
+					return -1;
+				}
+			}
+			return buf[curChar++];
+		}
+
+		public int readInt() {
+			int c = read();
+			while (isSpaceChar(c)) {
+				c = read();
+			}
+			int sgn = 1;
+			if (c == '-') {
+				sgn = -1;
+				c = read();
+			}
+			int res = 0;
+			do {
+				if (c < '0' || c > '9') {
+					throw new InputMismatchException();
+				}
+				res *= 10;
+				res += c - '0';
+				c = read();
+			} while (!isSpaceChar(c));
+			return res * sgn;
+		}
+
+		public boolean isSpaceChar(int c) {
+			if (filter != null) {
+				return filter.isSpaceChar(c);
+			}
+			return c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == -1;
+		}
+
+		public interface SpaceCharFilter {
+			public boolean isSpaceChar(int ch);
+		}
+	}
 }
