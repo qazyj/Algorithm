@@ -9,7 +9,7 @@ public class Algorithm {
 	
 	public static void main(String[] args) throws Exception {
 		SetData();
-		SearchBinary();
+		TwoPointer();
 		System.out.println(answer1 + " " + answer2);
 	}
 
@@ -27,11 +27,11 @@ public class Algorithm {
 		Arrays.sort(array);
 	}
 
-	private static void SearchBinary() {
+	private static void TwoPointer() {
 		int min = Integer.MAX_VALUE;
 		int left = 0, right = N - 1;
 		
-		// 이진 탐색
+		// 투 포인터
 		while (left < right) {
 			int sum = array[left] + array[right];
 
