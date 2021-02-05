@@ -1,44 +1,148 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.StringTokenizer;
+import java.util.InputMismatchException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Main {
 	static int N, K;
-	static char[] number;
+	static String number;
 	static StringBuilder sb;
 
 	public static void main(String[] args) throws Exception {
 		SetData();
 		FindMaxValue();
-		System.out.println(sb);
+		System.out.println(sb.delete(sb.length() - K, sb.length()));
 	}
 
 	private static void SetData() throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
+		InputReader in = new InputReader(System.in);
 
-		N = Integer.parseInt(st.nextToken());
-		K = Integer.parseInt(st.nextToken());
-		number = br.readLine().toCharArray();
+		N = in.nextInt();
+		K = in.nextInt();
+		number = in.nextLine();
 		sb = new StringBuilder();
 	}
 
 	private static void FindMaxValue() {
-       		Deque<Character> deque = new ArrayDeque<>();
-		for (int i = 0; i < number.length; i++) {
-			// 스택의 맨 뒤의 값이 number[i]보다 작으면 삭제한다.
-			// 아래 조건을 만족할 때까지 반복.
-			while (K > 0 && !deque.isEmpty() && deque.getLast() < number[i]) {
-        				deque.removeLast();
-				K--;
+		for (int i = 0; i < N; i++) {
+			if (K == 0) {
+				sb.append(number.substring(i));
+				break;
 			}
-			deque.addLast(number[i]);
-		}
+			char left = number.charAt(i);
+			if (left == '9') {
+				sb.append(left);
+				continue;
+			}
+			boolean isReduced = false;
+			for (int j = i + 1; j < N && j < i + K + 1; j++) {
+				char right = number.charAt(j);
 
-	    while(deque.size() > K) {
-	       	sb.append(deque.removeFirst());
-	    }
+				if (left < right) {
+					K -= j - i;
+					i = j - 1;
+					isReduced = true;
+					break;
+				}
+			}
+			if (!isReduced) {
+				sb.append(left);
+			}
+		}
+	}
+}
+
+class InputReader {
+	private final InputStream stream;
+	private final byte[] buf = new byte[8192];
+	private int curChar, snumChars;
+
+	public InputReader(InputStream st) {
+		this.stream = st;
+	}
+
+	public int read() {
+		if (snumChars == -1)
+			throw new InputMismatchException();
+		if (curChar >= snumChars) {
+			curChar = 0;
+			try {
+				snumChars = stream.read(buf);
+			} catch (IOException e) {
+				throw new InputMismatchException();
+			}
+			if (snumChars <= 0)
+				return -1;
+		}
+		return buf[curChar++];
+	}
+
+	public int nextInt() {
+		int c = read();
+		while (isSpaceChar(c)) {
+			c = read();
+		}
+		int sgn = 1;
+		if (c == '-') {
+			sgn = -1;
+			c = read();
+		}
+		int res = 0;
+		do {
+			res *= 10;
+			res += c - '0';
+			c = read();
+		} while (!isSpaceChar(c));
+		return res * sgn;
+	}
+
+	public long nextLong() {
+		int c = read();
+		while (isSpaceChar(c)) {
+			c = read();
+		}
+		int sgn = 1;
+		if (c == '-') {
+			sgn = -1;
+			c = read();
+		}
+		long res = 0;
+		do {
+			res *= 10;
+			res += c - '0';
+			c = read();
+		} while (!isSpaceChar(c));
+		return res * sgn;
+	}
+
+	public int[] nextIntArray(int n) {
+		int a[] = new int[n];
+		for (int i = 0; i < n; i++) {
+			a[i] = nextInt();
+		}
+		return a;
+	}
+
+	public String nextLine() {
+		int c = read();
+		while (isSpaceChar(c))
+			c = read();
+		StringBuilder res = new StringBuilder();
+		do {
+			res.appendCodePoint(c);
+			c = read();
+		} while (!isEndOfLine(c));
+		return res.toString();
+	}
+
+	public boolean isSpaceChar(int c) {
+		return c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == -1;
+	}
+
+	private boolean isEndOfLine(int c) {
+		return c == '\n' || c == '\r' || c == -1;
 	}
 }
