@@ -1,27 +1,32 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.InputMismatchException;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class Algorithm {
+public class Main {
 	static int N, S;
 	static int[] number;
+	static StringBuilder sb;
 
 	public static void main(String[] args) throws Exception {
 		SetData();
 		Sort();
+		System.out.println(sb);
 	}
 
 	private static void SetData() throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = null;
+		InputReader in = new InputReader(System.in);
 
-		N = Integer.parseInt(br.readLine());
+		N = in.nextInt();
 		number = new int[N];
+		sb = new StringBuilder();
 		
-		st = new StringTokenizer(br.readLine());
 		for(int i = 0; i < N; i++)
-			number[i] = Integer.parseInt(st.nextToken());
-		S = Integer.parseInt(br.readLine());
+			number[i] = in.nextInt();
+		S = in.nextInt();
 	}
 
 	private static void Sort() {
@@ -45,10 +50,102 @@ public class Algorithm {
 				number[y-1] = temp;
 			}
 			
-			if(S <= 0) break;		// S 가 0이하이면 바꿀 수 있는게 업서으니 반복문 나옴
+			if(S <= 0) break;		// S 가 0이하이면 바꿀 수 있는게 없으니 반복문 나옴
 		}
 
 		for(int i = 0; i < N; i++)
-			System.out.print(number[i] + " ");
+			sb.append(number[i] + " ");
+	}
+}
+
+class InputReader {
+	private final InputStream stream;
+	private final byte[] buf = new byte[8192];
+	private int curChar, snumChars;
+
+	public InputReader(InputStream st) {
+		this.stream = st;
+	}
+
+	public int read() {
+		if (snumChars == -1)
+			throw new InputMismatchException();
+		if (curChar >= snumChars) {
+			curChar = 0;
+			try {
+				snumChars = stream.read(buf);
+			} catch (IOException e) {
+				throw new InputMismatchException();
+			}
+			if (snumChars <= 0)
+				return -1;
+		}
+		return buf[curChar++];
+	}
+
+	public int nextInt() {
+		int c = read();
+		while (isSpaceChar(c)) {
+			c = read();
+		}
+		int sgn = 1;
+		if (c == '-') {
+			sgn = -1;
+			c = read();
+		}
+		int res = 0;
+		do {
+			res *= 10;
+			res += c - '0';
+			c = read();
+		} while (!isSpaceChar(c));
+		return res * sgn;
+	}
+
+	public long nextLong() {
+		int c = read();
+		while (isSpaceChar(c)) {
+			c = read();
+		}
+		int sgn = 1;
+		if (c == '-') {
+			sgn = -1;
+			c = read();
+		}
+		long res = 0;
+		do {
+			res *= 10;
+			res += c - '0';
+			c = read();
+		} while (!isSpaceChar(c));
+		return res * sgn;
+	}
+
+	public int[] nextIntArray(int n) {
+		int a[] = new int[n];
+		for (int i = 0; i < n; i++) {
+			a[i] = nextInt();
+		}
+		return a;
+	}
+
+	public String nextLine() {
+		int c = read();
+		while (isSpaceChar(c))
+			c = read();
+		StringBuilder res = new StringBuilder();
+		do {
+			res.appendCodePoint(c);
+			c = read();
+		} while (!isEndOfLine(c));
+		return res.toString();
+	}
+
+	public boolean isSpaceChar(int c) {
+		return c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == -1;
+	}
+
+	private boolean isEndOfLine(int c) {
+		return c == '\n' || c == '\r' || c == -1;
 	}
 }
