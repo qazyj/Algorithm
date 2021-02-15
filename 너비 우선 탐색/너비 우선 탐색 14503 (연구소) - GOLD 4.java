@@ -86,20 +86,18 @@ public class Main {
 	}
 	
 	private static void DFS(int a, int b) {
-		int nx,ny;
+		int r,c;
 		for (int i = 0; i < 4; i++) {
-			nx = a+x[i];
-			ny = b+y[i];
-			if (isVaildPos(nx, ny) && array[nx][ny]==0) {
-				array[nx][ny]=3;
-				DFS(nx,ny);
-			}
+			r = a+x[i];
+			c = b+y[i];
+			
+			if(r < 0 || c < 0 || r >= N || c >= M || array[r][c] != 0) continue;
+
+			array[r][c]=3;
+			DFS(r,c);
+			
 		}
 	}
-	
-	private static boolean isVaildPos(int x, int y) {
-		return (x>=0 && x<N && y>=0 && y <M);
-	}	
     
 	private static class InputReader {
 		private InputStream stream;
