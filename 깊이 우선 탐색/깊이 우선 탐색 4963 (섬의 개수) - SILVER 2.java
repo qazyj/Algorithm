@@ -4,7 +4,7 @@ import java.util.InputMismatchException;
 
 public class Main {
     static final int[][] xy = {{0, 1}, {0, -1}, {1, 0}, {1, 1}, {1, -1}, {-1, 0}, {-1, 1}, {-1, -1}};
-    static boolean[][] islands;
+    static boolean[][] check;
     static StringBuilder sb;
 
 	public static void main(String[] args) throws Exception {
@@ -25,20 +25,20 @@ public class Main {
                 return;
             }
 
-            islands = new boolean[y + 2][x + 2];
+            check = new boolean[y + 2][x + 2];
 
             for(int i = 1; i <= y; i++) {
                 for(int j = 1; j <= x; j++) {
-                    islands[i][j] = in.nextInt() > 0;
+                    check[i][j] = in.nextInt() > 0;
                 }
             }
             
             int result = 0;
             for(int i = 1; i <= y; i++) {
                 for(int j = 1; j <= x; j++) {
-                    if(islands[i][j]) {
+                    if(check[i][j]) {
                         result++;
-                        dfs(i, j, islands);
+                        dfs(i, j, check);
                     }
                 }
             }
