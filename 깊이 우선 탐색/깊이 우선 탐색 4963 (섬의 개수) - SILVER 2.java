@@ -1,78 +1,153 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.InputStream;
+import java.util.InputMismatchException;
 
-public class Algorithm {
-	static int[][] array;
-	static boolean[][] check;
-    static int[] x = {0,0,1,-1,-1,1,1,-1};
-    static int[] y = {1,-1,0,0,1,1,-1,-1};
-	static int N,M;
-	static StringBuilder sb;
+public class Main {
+    static final int[][] xy = {{0, 1}, {0, -1}, {1, 0}, {1, 1}, {1, -1}, {-1, 0}, {-1, 1}, {-1, -1}};
+    static boolean[][] islands;
+    static StringBuilder sb;
 
-	public static void main(String args[]) throws Exception {
+	public static void main(String[] args) throws Exception {
 		SetData();
 		System.out.print(sb);
 	}
-	
-	private static void SetData() throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		sb = new StringBuilder();
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		
-		M = Integer.parseInt(st.nextToken());
-		N = Integer.parseInt(st.nextToken());
-		while(M != 0 && N != 0) {
-			array = new int[N][M];
-			check = new boolean[N][M];
 
-            for(int i = 0; i < N; i++) {
-                st = new StringTokenizer(br.readLine());
-                for (int j = 0; j < M; j++) {
-                    array[i][j] = Integer.parseInt(st.nextToken());
-                }
+	// 데이터
+	private static void SetData() throws Exception {
+		InputReader in = new InputReader(System.in);
+		sb = new StringBuilder();
+		
+        while(true) {
+            int x = in.nextInt();
+            int y = in.nextInt();
+
+            if(x == 0 && y == 0) {
+                return;
             }
 
-			int count = 0;
-			for (int a = 0; a < N; a++) {
-				for (int b = 0; b < M; b++) {
-					if (!check[a][b] && array[a][b] == 1) {
-						count++;
-						check[a][b] = true;
-						bfs(a, b);
-					}
-				}
-			}
-			st = new StringTokenizer(br.readLine());
-			M = Integer.parseInt(st.nextToken());
-			N = Integer.parseInt(st.nextToken());
-			
-			sb.append(count + "\n");
-		}
+            islands = new boolean[y + 2][x + 2];
+
+            for(int i = 1; i <= y; i++) {
+                for(int j = 1; j <= x; j++) {
+                    islands[i][j] = in.nextInt() > 0;
+                }
+            }
+            
+            int result = 0;
+            for(int i = 1; i <= y; i++) {
+                for(int j = 1; j <= x; j++) {
+                    if(islands[i][j]) {
+                        result++;
+                        dfs(i, j, islands);
+                    }
+                }
+            }
+            sb.append(result + "\n");
+        }
 	}
 
-	private static void bfs(int a, int b) {
-		Queue<int[]> queue = new LinkedList<>();
-		queue.offer(new int[] { a, b });
+    private static void dfs(int x, int y, boolean[][] islands) {
+        for(int[] XY : xy) {
+            int r = x + XY[0];
+            int c = y + XY[1];
 
-		while (!queue.isEmpty()) {
-			int location[] = queue.poll();
+            if(islands[r][c]) {
+                islands[r][c] = false;
+                dfs(r, c, islands);
+            }
+        }
+    }
+}
+	
 
-			for (int direction = 0; direction < 8; direction++) {
-				int r = location[0] + x[direction];
-				int c = location[1] + y[direction];
+class InputReader {
+	private final InputStream stream;
+	private final byte[] buf = new byte[8192];
+	private int curChar, snumChars;
 
-				if (r >= 0 && c >= 0 && r < N && c < M) {
-					if (array[r][c] == 1 && !check[r][c]) {
-						queue.offer(new int[] { r, c });
-						check[r][c] = true;
-					}
-				}
-			}
-		}
+	public InputReader(InputStream st) {
+		this.stream = st;
 	}
 
+	public int read() {
+		if (snumChars == -1)
+			throw new InputMismatchException();
+		if (curChar >= snumChars) {
+			curChar = 0;
+			try {
+				snumChars = stream.read(buf);
+			} catch (IOException e) {
+				throw new InputMismatchException();
+			}
+			if (snumChars <= 0)
+				return -1;
+		}
+		return buf[curChar++];
+	}
+
+	public int nextInt() {
+		int c = read();
+		while (isSpaceChar(c)) {
+			c = read();
+		}
+		int sgn = 1;
+		if (c == '-') {
+			sgn = -1;
+			c = read();
+		}
+		int res = 0;
+		do {
+			res *= 10;
+			res += c - '0';
+			c = read();
+		} while (!isSpaceChar(c));
+		return res * sgn;
+	}
+
+	public long nextLong() {
+		int c = read();
+		while (isSpaceChar(c)) {
+			c = read();
+		}
+		int sgn = 1;
+		if (c == '-') {
+			sgn = -1;
+			c = read();
+		}
+		long res = 0;
+		do {
+			res *= 10;
+			res += c - '0';
+			c = read();
+		} while (!isSpaceChar(c));
+		return res * sgn;
+	}
+
+	public int[] nextIntArray(int n) {
+		int a[] = new int[n];
+		for (int i = 0; i < n; i++) {
+			a[i] = nextInt();
+		}
+		return a;
+	}
+
+	public String nextLine() {
+		int c = read();
+		while (isSpaceChar(c))
+			c = read();
+		StringBuilder res = new StringBuilder();
+		do {
+			res.appendCodePoint(c);
+			c = read();
+		} while (!isEndOfLine(c));
+		return res.toString();
+	}
+
+	public boolean isSpaceChar(int c) {
+		return c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == -1;
+	}
+
+	private boolean isEndOfLine(int c) {
+		return c == '\n' || c == '\r' || c == -1;
+	}
 }
