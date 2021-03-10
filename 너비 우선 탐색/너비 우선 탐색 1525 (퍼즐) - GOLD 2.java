@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-public class Algorithm {
+public class Main {
 	static int[] x = { -1, 1, 0, 0 };
 	static int[] y = { 0, 0, -1, 1 };
 	static int answer, count;
