@@ -15,35 +15,39 @@ public class Algorithm {
 		InputReader in = new InputReader(System.in);
 
 		N = in.nextInt();
-		array = new int[N + 1];
-		pi = new int[N + 1];
+		array = new int[N];
+		pi = new int[N];
 
-		for (int i = 1; i <= N; i++) {
+		for (int i = N - 1; i >= 0; i--) {
 			array[i] = in.nextInt();
 		}
 
 		KMP();
 
-		for (int i = N; i >= 1; i--) {
-			if (pi[i] != 0) {
-				System.out.println(i + " " + pi[i]);
-				System.exit(0);
+		int length = 0, count = 0;
+		for (int i = 0; i < N; i++) {
+			if (pi[i] > length) {
+				length = pi[i];
+				count = 0;
 			}
+			if (pi[i] == length)
+				count++;
 		}
-
-		System.out.println(-1);
-		
+		if (length == 0)
+			System.out.println("-1");
+		else
+			System.out.println(length + " " + count);
 	}
 
-	static void KMP() {
-		for (int i = N - 1; i >= 1; i--) {
-			int count = 0;
-			int j = N;
-			int index = i;
-			while (array[index--] == array[j--]) {
-				count++;
+	public static void KMP() {
+		int j = 0;
+		for (int i = 1; i < N; i++) {
+			while (j > 0 && array[j] != array[i]) {
+				j = pi[j - 1];
 			}
-			pi[count]++;
+			if (array[j] == array[i]) {
+				pi[i] = ++j;
+			}
 		}
 	}
 }
