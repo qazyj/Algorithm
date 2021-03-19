@@ -5,7 +5,7 @@ import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Algorithm {
+public class Main {
 	static int[] x = { -1, 1, 0, 0 };
 	static int[] y = { 0, 0, -1, 1 };
 	static int N, M, answer;
