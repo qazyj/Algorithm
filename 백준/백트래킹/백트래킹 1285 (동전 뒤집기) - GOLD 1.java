@@ -1,0 +1,170 @@
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.PriorityQueue;
+
+public class Algorithm {
+	static int N, answer;
+	static char[][] array;
+
+	public static void main(String[] args) throws Exception {
+		SetData();
+		System.out.println(answer);
+	}
+
+	// 데이터
+	private static void SetData() throws Exception {
+		InputReader in = new InputReader(System.in);
+
+		N = in.nextInt();
+		answer = Integer.MAX_VALUE;
+		array = new char[N][N];
+		
+        for(int i = 0; i < N ; i ++){
+            array[i] = in.nextLine().toCharArray();
+        }
+		
+        solve(0);
+	}
+	
+    public static void solve(int row){
+        if(row == N){
+            int count = 0;
+            for(char[] i : array){
+                int temp = 0;
+                for(char j : i){
+                    if(j == 'T'){
+                        temp ++;
+                    }
+                }
+                count = count + Math.min(temp,N-temp);
+            }
+            answer = Math.min(count,answer);
+            return;
+        }
+        solve(row+1);
+        for(int i = 0 ; i < N; i ++){
+            array[i][row] = array[i][row] == 'H'?'T':'H';
+        }
+        solve(row+1);
+    }
+}
+
+class Delivery implements Comparable<Delivery> {
+	int from;
+	int to;
+	int weight;
+
+	public Delivery(int from, int to, int weight) {
+		this.from = from;
+		this.to = to;
+		this.weight = weight;
+	}
+
+	@Override
+	public int compareTo(Delivery o) {
+		if (this.to < o.to) {
+			return -1;
+		} else if (this.to == o.to) {
+			if (this.from < o.from) {
+				return -1;
+			}
+		}
+		return 1;
+	}
+}
+
+class InputReader {
+	private final InputStream stream;
+	private final byte[] buf = new byte[8192];
+	private int curChar, snumChars;
+
+	public InputReader(InputStream st) {
+		this.stream = st;
+	}
+
+	public int read() {
+		if (snumChars == -1)
+			throw new InputMismatchException();
+		if (curChar >= snumChars) {
+			curChar = 0;
+			try {
+				snumChars = stream.read(buf);
+			} catch (IOException e) {
+				throw new InputMismatchException();
+			}
+			if (snumChars <= 0)
+				return -1;
+		}
+		return buf[curChar++];
+	}
+
+	public int nextInt() {
+		int c = read();
+		while (isSpaceChar(c)) {
+			c = read();
+		}
+		int sgn = 1;
+		if (c == '-') {
+			sgn = -1;
+			c = read();
+		}
+		int res = 0;
+		do {
+			res *= 10;
+			res += c - '0';
+			c = read();
+		} while (!isSpaceChar(c));
+		return res * sgn;
+	}
+
+	public long nextLong() {
+		int c = read();
+		while (isSpaceChar(c)) {
+			c = read();
+		}
+		int sgn = 1;
+		if (c == '-') {
+			sgn = -1;
+			c = read();
+		}
+		long res = 0;
+		do {
+			res *= 10;
+			res += c - '0';
+			c = read();
+		} while (!isSpaceChar(c));
+		return res * sgn;
+	}
+
+	public int[] nextIntArray(int n) {
+		int a[] = new int[n];
+		for (int i = 0; i < n; i++) {
+			a[i] = nextInt();
+		}
+		return a;
+	}
+
+	public String nextLine() {
+		int c = read();
+		while (isSpaceChar(c))
+			c = read();
+		StringBuilder res = new StringBuilder();
+		do {
+			res.appendCodePoint(c);
+			c = read();
+		} while (!isEndOfLine(c));
+		return res.toString();
+	}
+
+	public boolean isSpaceChar(int c) {
+		return c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == -1;
+	}
+
+	private boolean isEndOfLine(int c) {
+		return c == '\n' || c == '\r' || c == -1;
+	}
+}
