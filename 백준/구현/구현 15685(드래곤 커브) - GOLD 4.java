@@ -21,27 +21,28 @@ public class Algorithm {
 
 		N = in.nextInt();
 		answer = 0;
-		check = new boolean[100][100];
+		check = new boolean[101][101];
 		
 		for(int i = 0; i < N; i++) {
 			int x = in.nextInt();
 			int y = in.nextInt();
 			int d = in.nextInt();
 			int g = in.nextInt();
+	        check[x][y] = true;
 			
 			DrawLine(x, y, GetDirections(d, g));
 		}
 		
 		// 사각형 개수
-		for(int i = 0; i < 99; i++) {
-			for(int j = 0; j < 99; j++) {
+		for(int i = 0; i < 100; i++) {
+			for(int j = 0; j < 100; j++) {
 				if(check[i][j] && check[i+1][j] && check[i][j+1] && check[i+1][j+1])
 					answer++;
 			}
 		}
 	}
 	
-    public static List<Integer> GetDirections(int d, int g) {
+    private static List<Integer> GetDirections(int d, int g) {
         List<Integer> directions = new ArrayList<>();
         directions.add(d);
  
@@ -54,19 +55,17 @@ public class Algorithm {
         return directions;
     }
  
-    public static void DrawLine(int x, int y, List<Integer> directions) {
-        check[x][y] = true;
- 
+    private static void DrawLine(int x, int y, List<Integer> directions) { 
         for (int direction : directions) {
             switch (direction) {
                 case 0:	// 오른쪽
-                    check[++x][y] = true;
+                	check[++x][y] = true;
                     break;
                 case 1:	// 위
-                    check[x][--y] = true;
+                	check[x][--y] = true;
                     break;
                 case 2:	// 왼쪽
-                    check[--x][y] = true;
+                	check[--x][y] = true;
                     break;
                 case 3:	// 아래
                     check[x][++y] = true;
