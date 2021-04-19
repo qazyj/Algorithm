@@ -6,9 +6,8 @@ import java.util.InputMismatchException;
 
 public class Algorithm {
 	static int R, C, M, answer;
-	static Shark shark;
 	static ArrayList<Shark> sharks;
-	static int[] dx = { 0, 1, -1, 0, 0 };
+	static int[] dx = { 0, -1, 1, 0, 0 };
 	static int[] dy = { 0, 0, 0, 1, -1 };
 
 	public static void main(String[] args) throws Exception {
@@ -26,8 +25,17 @@ public class Algorithm {
 		answer = 0;
 		sharks = new ArrayList<>();
 
+		int r,c,s,d,z;
 		for(int i = 0 ; i < M; i++) {
-			sharks.add(new Shark(in.nextInt(),in.nextInt(),in.nextInt(),in.nextInt(),in.nextInt()));
+			r = in.nextInt();
+			c = in.nextInt();
+			s = in.nextInt();
+			d = in.nextInt();
+			z = in.nextInt();
+			
+			if(d == 1 || d == 2) s = s % (R*2-2);
+			if(d == 3 || d == 4) s = s % (C*2-2);
+			sharks.add(new Shark(r,c,s,d,z));
 		}
 
 		solve();
@@ -37,19 +45,17 @@ public class Algorithm {
 		for(int person = 1; person <= C; person++) {
 			Collections.sort(sharks);
 			
-			System.out.println("\n" + person);
-			for(int i = 0 ; i < sharks.size(); i++) 
-				System.out.println(sharks.get(i).r + " " + sharks.get(i).c + " " + answer);
-		
-			
 			// 잡아먹음
 			int r = -1, c = -1;
 			for(int i = 0; i < sharks.size(); i++) {
-				if(r == sharks.get(i).r && c == sharks.get(i).c) {
+				int tempR = sharks.get(i).r;
+				int tempC = sharks.get(i).c;
+				
+				if(r == tempR && c == tempC) {
 					sharks.remove(i--);
 				} else {
-					r = sharks.get(i).r;
-					c = sharks.get(i).c;
+					r = tempR;
+					c = tempC;
 				}
 			}
 			
@@ -71,19 +77,21 @@ public class Algorithm {
 				int d = sharks.get(i).d;
 				
 				// 물고기 이동
-				for(int j = 0; j < s; j++) {
-					if(r+dx[d] <= 0 || c+dy[d] <= 0) 
-						d--;
-					else if(r+dx[d] > R || c+dy[d] > C)
-						d++;
+				for(int j = 0; j < s; j++) {					
+					if(r + dx[d] <= 0 || c + dy[d] <= 0 || r + dx[d] >= R + 1 || c + dy[d] >= C+1) {
+						if(d % 2 == 0)
+							d--;
+						else
+							d++;
+					}
 					
 					r += dx[d];
 					c += dy[d];
 				}
 
-				sharks.get(i).r = r;
-				sharks.get(i).c = c;
-				sharks.get(i).d = d;							
+				sharks.get(i).SetR(r);
+				sharks.get(i).SetC(c);
+				sharks.get(i).SetD(d);					
 			}
 		}
 	}
@@ -100,14 +108,26 @@ class Shark implements Comparable<Shark> {
 		this.d = d;
 		this.z = z;
 	}
+	
+	public void SetR(int r) {
+		this.r = r;
+	}
+	
+	public void SetC(int c) {
+		this.c = c;
+	}
+	
+	public void SetD(int d) {
+		this.d = d;
+	}
 
 	@Override
 	public int compareTo(Shark o) {
 		if(this.c == o.c) {
-			if(this.z != o.z)			
-				return Integer.compare(this.r, o.r);
+			if(this.r == o.r)			
+				return -Integer.compare(this.z, o.z);
 			else
-				return Integer.compare(this.z, o.z);
+				return Integer.compare(this.r, o.r);
 		} else
 			return Integer.compare(this.c, o.c);
 	}
