@@ -5,74 +5,84 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Algorithm {	
+	static StringBuilder sb;
+	
 	public static void main(String[] args) throws Exception {
+		SetData();
+		System.out.println(sb);
+	}
+	
+	private static void SetData() {
 		InputReader in = new InputReader(System.in);
 
 		int testcase = in.nextInt();
-		StringBuilder sb = new StringBuilder();
+		sb = new StringBuilder();
 
 		for (int t = 1; t <= testcase; t++) {
 			int number = in.nextInt();
 			
-			int[] rank = new int[number+1];
-			for(int i = 1; i <= number; i++)
-				rank[i] = in.nextInt();
+			solve(number, in);
+		}
+	}
+	
+	private static void solve(int number, InputReader in) {
+		int[] rank = new int[number+1];
+		for(int i = 1; i <= number; i++)
+			rank[i] = in.nextInt();
+		
+		boolean[][] map = new boolean[number+1][number+1];
+		int[] indegree = new int[number+1];
+		for(int i = 1; i <= number; i++) {
+			for(int j = 1; j < i; j++) {
+				map[rank[i]][rank[j]] = true;
+				indegree[rank[i]]++;
+			}
+		}
+		
+		int k = in.nextInt();
+		for(int i = 0 ; i < k; i++) {
+			int t1 = in.nextInt();
+			int t2 = in.nextInt();
 			
-			boolean[][] map = new boolean[number+1][number+1];
-			int[] indegree = new int[number+1];
-			for(int i = 1; i <= number; i++) {
-				for(int j = 1; j < i; j++) {
-					map[rank[i]][rank[j]] = true;
-					indegree[rank[i]]++;
-				}
+			if(map[t1][t2]) {
+				indegree[t1]--;
+				indegree[t2]++;
+			} else {
+				indegree[t1]++;
+				indegree[t2]--;
 			}
 			
-			int k = in.nextInt();
-			for(int i = 0 ; i < k; i++) {
-				int t1 = in.nextInt();
-				int t2 = in.nextInt();
-				
-				if(map[t1][t2]) {
-					indegree[t1]--;
-					indegree[t2]++;
-				} else {
-					indegree[t1]++;
-					indegree[t2]--;
-				}
-				
-				map[t1][t2] = !map[t1][t2];
-				map[t2][t1] = !map[t2][t1];
-			}
+			map[t1][t2] = !map[t1][t2];
+			map[t2][t1] = !map[t2][t1];
+		}
+		
+		Queue<Integer> queue = new LinkedList<Integer>();
+		for(int i = 1; i <= number; i++) {
+			if(indegree[i] == 0)
+				queue.add(i);
+		}
+		
+		int loopCount = 0;
+		String answer = "";
+		while(!queue.isEmpty()) {
+			int temp = queue.poll();
+			loopCount++;
+			answer += temp + " ";
 			
-			Queue<Integer> queue = new LinkedList<Integer>();
 			for(int i = 1; i <= number; i++) {
+				if(!map[i][temp]) continue;
+				
+				indegree[i]--;
 				if(indegree[i] == 0)
 					queue.add(i);
 			}
 			
-			int loopCount = 0;
-			String answer = "";
-			while(!queue.isEmpty()) {
-				int temp = queue.poll();
-				loopCount++;
-				answer += temp + " ";
-				
-				for(int i = 1; i <= number; i++) {
-					if(!map[i][temp]) continue;
-					
-					indegree[i]--;
-					if(indegree[i] == 0)
-						queue.add(i);
-				}
-				
-			}
-			
-			if(loopCount == number)
-				sb.append(answer).append("\n");
-			else
-				sb.append("IMPOSSIBLE").append("\n");
 		}
-		System.out.println(sb);
+		
+		if(loopCount == number)
+			sb.append(answer).append("\n");
+		else
+			sb.append("IMPOSSIBLE").append("\n");
 	}
 }
 
