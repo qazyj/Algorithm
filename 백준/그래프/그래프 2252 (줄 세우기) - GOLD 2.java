@@ -65,40 +65,6 @@ public class Algorithm {
 	}
 }
 
-class Number implements Comparable<Number> {
-	int index;
-	int value;
-
-	public Number(int index, int value) {
-		this.index = index;
-		this.value = value;
-	}
-	
-	@Override
-	public int compareTo(Number o) {
-		// TODO Auto-generated method stub
-			return Integer.compare(this.value, o.value);
-	}
-
-}
-
-class Index implements Comparable<Index> {
-	int index;
-	int value;
-
-	public Index(int index, int value) {
-		this.index = index;
-		this.value = value;
-	}
-	
-	@Override
-	public int compareTo(Index o) {
-		// TODO Auto-generated method stub
-			return Integer.compare(this.index, o.index);
-	}
-
-}
-
 class InputReader {
 	private final InputStream stream;
 	private final byte[] buf = new byte[8192];
