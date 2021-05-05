@@ -1,48 +1,63 @@
-public class Solution {
-    public int solution(String s) {
-      int answer = s.length();
-
-      for (int i = 1; i <= s.length() / 2; i++) {
-        int compLength = compression(s, i).length();
-        answer = Math.min(answer, compLength);
-      }
-
-      return answer;
+class Solution {    
+    static int[][] hands = {
+            {' ', '1', '2', '3'},
+            {' ', '4', '5', '6'},
+            {' ', '7', '8', '9'},
+            {' ', '*', '0', '#'}
+    };
+    
+    public String solution(int[] numbers, String hand) {
+        StringBuilder sb = new StringBuilder();
+        int L, R, dl, dr;
+        dr = dl = 0;
+        L = 10;
+        R = 12;
+        for (int i : numbers) {
+            if (i == 1 || i == 4 || i == 7) {
+                sb.append("L");
+                L = i;
+                continue;
+            } else if (i == 3 || i == 6 || i == 9) {
+                sb.append("R");
+                R = i;
+                continue;
+            }
+            if (i == 0) {
+                i = 11;
+            }
+            dl = getDistance(L, i);
+            dr = getDistance(R, i);
+            if (dl < dr) {
+                L = i;
+                sb.append("L");
+            } else if (dr < dl) {
+                R = i;
+                sb.append("R");
+            } else {
+                if (hand.equals("left")) {
+                    L = i;
+                    sb.append("L");
+                } else {
+                    R = i;
+                    sb.append("R");
+                }
+            }
+        }
+        return sb.toString();
     }
 
-    private String compression(String string, int i) {
-
-      int count = 1;
-      String compression = "";
-      String pattern = "";
-
-      for (int j = 0; j <= string.length() + i; j += i) {
-
-        String nowString;
-
-        // 전 문자열과 비교할 현재 문자열
-        if (j >= string.length()) { // 현재 문자열이 없을 때
-          nowString = "";
-        } else if (string.length() < j + i) { // 마지막 현재 문자열일 때
-          nowString = string.substring(j);
-        } else {
-          nowString = string.substring(j, j + i);
+    static int getDistance(int source, int dest) {
+        int r = dest / 3;
+        int c = dest % 3;
+        if (c == 0) {
+            c = 3;
         }
-
-        // 1. 전 문자열이랑 똑같은지 비교한다. (맨 처음이면 비교 X)
-        if (j != 0) {
-          if (nowString.equals(pattern)) { // 같으면
-            count++;
-          } else if (count >= 2) { // 다르고 count가 2회 이상
-            compression += count + pattern;
-            count = 1;
-          } else { // 압축 불가능
-            compression += pattern;
-          }
+        int nr = source / 3;
+        int nc = source % 3;
+        if (nc == 0) {
+            nr--;
+            nc = 3;
         }
-        pattern = nowString;
-      }
-
-      return compression;
+        return Math.abs(r - nr) + Math.abs(c - nc);
     }
 }
