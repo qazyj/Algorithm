@@ -1,11 +1,18 @@
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.InputMismatchException;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class Algorithm {
-	static boolean[] prime, flag, number;
-	static StringBuilder sb;
+public class Main {
 	static int N;
+	static boolean[] prime;
+	static int[] sangGeun;
+	static StringBuilder sb;
 
 	public static void main(String[] args) throws Exception {
 		SetData();
@@ -16,51 +23,55 @@ public class Algorithm {
 	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
 
-		prime = new boolean[1000001];
-		flag = new boolean[1000001];
-		number = new boolean[1000001];
-		sb = new StringBuilder();
 		N = in.nextInt();
-
+		sb = new StringBuilder();
+		prime = new boolean[1000001];
+		sangGeun = new int[1000001];
+		
 		getPrimeNumber();
-		getSangGeunSoo(N);
-
+		
 		for (int i = 1; i <= N; i++) {
-			if (getSangGeunSoo(i) && !prime[i]) {
+			if (getSangGeunSoo(i) == 1 && !prime[i]) {
 				sb.append(i).append("\n");
 			}
 		}
 	}
-
-	public static boolean getSangGeunSoo(int index) {
-		// basecase
-		if (index == 1)	return true;
+	
+	static int getSangGeunSoo(int index) {
 		
-		if (flag[index])  return number[index];
-		
-		flag[index] = true;
-
-		int sum = 0, div = 1000001, cur = index;
-
-		while (cur > 0) {
-			int temp = cur / div;
-			sum += Math.pow(temp, 2);
-			cur %= div;
-			div /= 10;
+		if(sangGeun[index] != 0) {
+			return sangGeun[index];
 		}
-		return number[index] = getSangGeunSoo(sum);
-
+		
+		int save=index, sum = 0;
+		while(true) {
+			int temp=save%10;
+			sum+= Math.pow(temp, 2);
+			save=save/10;
+			if(save==0)
+				break;					
+		}
+		
+		// 상근수
+		if(sum==1) {
+			sangGeun[index]=1;
+		}
+		else { // 상근수 X
+			sangGeun[index]=2;
+			sangGeun[index]=getSangGeunSoo(sum);
+		}
+		
+		return sangGeun[index];
 	}
-
+	
+	// 소수 체크
 	private static void getPrimeNumber() {
 		prime[0] = prime[1] = true;
 		for (int i = 2; i <= 1000000; i++) {
-			// true면 이미 소수이므로 pass
 			if (prime[i]) {
 				continue;
 			}
 
-			// 해당 수로 나누어 떨어지는 수는 소수이므로 true로 check
 			for (int j = i + i; j <= 1000000; j += i) {
 				prime[j] = true;
 			}
