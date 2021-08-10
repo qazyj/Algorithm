@@ -3,12 +3,13 @@ import java.io.InputStream;
 import java.util.InputMismatchException;
 
 public class Main {
-	static int N, r, c, answer;
-	static int[] x = {0, 0, 1, 1};
-	static int[] y = {0, 1, 0, 1};
-
+	static int N, answer;
+	static StringBuilder sb;
+	static int[][] array;
+	
 	public static void main(String[] args) throws Exception {
 		SetData();
+		System.out.println(sb);
 	}
 
 	// 데이터
@@ -16,38 +17,51 @@ public class Main {
 		InputReader in = new InputReader(System.in);
 
 		N = in.nextInt();
-		r = in.nextInt();
-		c = in.nextInt();
-		answer = 0;
-		
-        dfs((int)Math.pow(2, N), 0, 0);
-	}
-
-    private static void dfs(int n, int i, int j) {
-        if(n == 2) {
-            for (int direction = 0; direction < 4; direction++) {
-                int rx = i + x[direction];
-                int ry = j + y[direction];
-            	
-                if (rx == r && ry == c) {
-                    System.out.println(answer);
-                    System.exit(0);
-                }
-                answer++;
-            }
-            return;
-        }
+		sb = new StringBuilder();		
+		array = new int[N][N];	
         
-		for (int s = i; s < i+n; s+=n/2) {
-			for (int e = j; e < j+n; e+=n/2) {
-				if(s+n/2-1<r || e+n/2-1<c) {
-					answer+=(n/2)*(n/2);
-					continue;
-				}
-				dfs(n/2,s,e);
+		for(int i = 0; i < N; i++) {
+			String s = in.nextLine();
+			
+			for(int j = 0; j < N; j++) {
+				array[i][j] = s.charAt(j) - '0';
 			}
 		}
-    }
+
+		dfs(N, 0, 0);
+	}
+
+	private static void dfs(int n, int i, int j) {
+		// 압축 가능
+		if(compression(n, i, j)) {
+			sb.append(array[i][j]);
+			return;
+		}
+
+		n = n / 2;	
+		
+		sb.append('(');	
+		
+		dfs(n, i, j);	// 왼위
+		dfs(n, i, j + n);	// 오위
+		dfs(n, i + n, j);	// 왼밑
+		dfs(n ,i + n, j + n);	// 오밑
+		
+		sb.append(')');	
+	}
+	
+	public static boolean compression(int n, int i, int j) {
+		int value = array[i][j];
+		
+		for(int x = i; x < i + n; x++) {
+			for(int y = j; y < j + n; y++) {
+				if(value != array[x][y]) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 }
 
 class InputReader {
