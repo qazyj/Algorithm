@@ -1,57 +1,63 @@
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
-public class Algorithm {
-    static int[] array;
-    static int N, answer1, answer2;
-	
+public class Main {
+	static int N;
+	static int[] array;
+	static StringBuilder sb;
+
 	public static void main(String[] args) throws Exception {
 		SetData();
-		TwoPointer();
-		System.out.println(answer1 + " " + answer2);
+		System.out.println(sb);
 	}
 
 	// 데이터
 	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
-		
-        N = in.nextInt();
+
+		N = in.nextInt();
+		sb = new StringBuilder();
 		array = new int[N];
-		answer1 = answer2 = 0;
-
-		for (int i = 0; i < N; ++i) {
-			array[i] = in.nextInt();
-		}
-		Arrays.sort(array);
-	}
-
-	private static void TwoPointer() {
-		int min = Integer.MAX_VALUE;
-		int left = 0, right = N - 1;
 		
-		// 투 포인터
+		for (int i = 0; i < N; i++) 
+			array[i] = in.nextInt();
+		
+		Arrays.sort(array);
+		TwoPointer(0, N - 1);
+	}
+	
+	private static void TwoPointer(int left, int right) {
+		int min = Integer.MAX_VALUE;
+		int acid = 0, alkaline = 0, sum;
+		
 		while (left < right) {
-			int sum = array[left] + array[right];
+			sum = array[left] + array[right];
 
-			// v가 최소일 때 특성값 갱신
 			if (min > Math.abs(sum)) {
 				min = Math.abs(sum);
-				answer1 = array[left];
-				answer2 = array[right];
+				acid = array[left];
+				alkaline = array[right];
 			}
 
 			if (sum > 0)
 				right--;
-			else
+			else if(sum < 0)
 				left++;
+			else 
+				break;
 		}
+		
+		sb.append(acid + " " + alkaline);
 	}
 }
 
 class InputReader {
-
 	private final InputStream stream;
 	private final byte[] buf = new byte[8192];
 	private int curChar, snumChars;
@@ -120,19 +126,6 @@ class InputReader {
 			a[i] = nextInt();
 		}
 		return a;
-	}
-
-	public String readString() {
-		int c = read();
-		while (isSpaceChar(c)) {
-			c = read();
-		}
-		StringBuilder res = new StringBuilder();
-		do {
-			res.appendCodePoint(c);
-			c = read();
-		} while (!isSpaceChar(c));
-		return res.toString();
 	}
 
 	public String nextLine() {
