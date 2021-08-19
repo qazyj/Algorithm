@@ -5,39 +5,43 @@ import java.util.InputMismatchException;
 
 public class Main {
 	static int N;
-	static int[] min, max, array, temp;
+	static int[][] dp;
 
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		SetData();
-		System.out.println(Math.max(max[2], Math.max(max[0], max[1]))+" "+Math.min(min[2], Math.min(min[0], min[1])));
+		System.out.print(dp[N-1][5] + " " + dp[N-1][0]);
 	}
 
 	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
 		
 		N =  in.nextInt();
-		min = new int [3];
-		max = new int [3];
-		array = new int [3];
-		temp = new int [3];
-		
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < 3; j++) 
-				array[j] = in.nextInt();
-			temp[0] = array[0] + Math.min(min[0], min[1]);
-			temp[1] = array[1] + Math.min(min[2], Math.min(min[0], min[1]));
-			temp[2] = array[2] + Math.min(min[2], min[1]);
-			min[0] = temp[0];
-			min[1] = temp[1];
-			min[2] = temp[2];
-			temp[0] = array[0] + Math.max(max[0], max[1]);
-			temp[1] = array[1] + Math.max(max[2], Math.max(max[0], max[1]));
-			temp[2] = array[2] + Math.max(max[2], max[1]);
-			max[0] = temp[0];
-			max[1] = temp[1];
-			max[2] = temp[2];
+		int[] input = new int[3];
+		dp = new int[N][6];
+
+		for (int i = 0; i < 3; i++)
+			input[i] =  in.nextInt();
+
+		for (int i = 0; i < 3; i++)
+			dp[0][3 + i] = dp[0][i] = input[i];
+
+		for (int i = 1; i < N; i++) {
+			for (int j = 0; j < 3; j++)
+				input[j] =  in.nextInt();
+
+			int preIndex = i - 1;
+
+			dp[i][0] = Integer.min(dp[preIndex][0], dp[preIndex][1]) + input[0];
+			dp[i][1] = Integer.min(dp[preIndex][0], Math.min(dp[preIndex][1], dp[preIndex][2])) + input[1];
+			dp[i][2] = Integer.min(dp[preIndex][1], dp[preIndex][2]) + input[2];
+
+			dp[i][3] = Integer.max(dp[preIndex][3], dp[preIndex][4]) + input[0];
+			dp[i][4] = Integer.max(dp[preIndex][3], Math.max(dp[preIndex][4], dp[preIndex][5])) + input[1];
+			dp[i][5] = Integer.max(dp[preIndex][4], dp[preIndex][5]) + input[2];
 		}
+
+		Arrays.sort(dp[N - 1]);
 	}
 }
 
