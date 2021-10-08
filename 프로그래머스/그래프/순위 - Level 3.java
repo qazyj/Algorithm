@@ -9,7 +9,7 @@ class Solution {
         for(int i=1; i<=n; i++){
             for(int j=1; j<=n; j++){
                 for(int k=1; k<=n; k++){
-                    if(game[j][i]&&game[i][k]){game[j][k]=true;}
+                    if(game[i][j]&&game[i][k]){game[j][k]=true;}
                 }
             }
         }
