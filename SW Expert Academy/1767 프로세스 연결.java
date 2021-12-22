@@ -11,6 +11,7 @@ public class Algorithm {
 	static int[] y = { 0, 1, 0, -1 };
 	static StringBuilder sb;
 
+
 	public static void main(String[] args) throws Exception {
 		SetData();
 		System.out.println(sb);
@@ -20,7 +21,7 @@ public class Algorithm {
 	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
 
-		int testcase = in.nextInt();
+		int testcase = in.nextInt();	//testcase
 		sb = new StringBuilder();
 
 		for (int i = 1; i <= testcase; i++) {
