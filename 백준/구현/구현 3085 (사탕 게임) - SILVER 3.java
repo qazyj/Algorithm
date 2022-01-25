@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Main {
 	static int N, answer;
-	static char arr[][];
+	static char array[][];
 
 	public static void main(String[] args) throws Exception {
 		SetData();
@@ -16,10 +16,10 @@ public class Main {
 
 		N = in.nextInt();
 		answer = 0;
-		arr = new char[N][N];
+		array = new char[N][N];
 		for(int i = 0; i < N; i++) {
 			String tmp = in.nextLine();
-			for(int j = 0; j < N; j++) arr[i][j] = tmp.charAt(j);
+			for(int j = 0; j < N; j++) array[i][j] = tmp.charAt(j);
 			answer = Math.max(answer, checkRow(i));
 		}
 
@@ -47,17 +47,17 @@ public class Main {
 	}
 
 	public static void swap(int x1, int y1, int x2, int y2) {
-		char tmp = arr[x1][y1];
-		arr[x1][y1] = arr[x2][y2];
-		arr[x2][y2] = tmp;
+		char tmp = array[x1][y1];
+		array[x1][y1] = array[x2][y2];
+		array[x2][y2] = tmp;
 	}
 
 	public static int checkRow(int x) {
 		int temp = 1, result = 1;
-		char c = arr[x][0];
+		char c = array[x][0];
 		for(int i = 1; i < N; i++) {
-			if(arr[x][i] != c) {
-				c = arr[x][i];
+			if(array[x][i] != c) {
+				c = array[x][i];
 				result = Math.max(result, temp);
 				temp = 1;
 			} else temp++;
@@ -67,10 +67,10 @@ public class Main {
 
 	public static int checkColumn(int y) {
 		int temp = 1, result = 1;
-		char c = arr[0][y];
+		char c = array[0][y];
 		for(int i = 1; i < N; i++) {
-			if(arr[i][y] != c) {
-				c = arr[i][y];
+			if(array[i][y] != c) {
+				c = array[i][y];
 				result = Math.max(result, temp);
 				temp = 1;
 			} else temp++;
