@@ -18,63 +18,76 @@ public class Main {
 		sb = new StringBuilder();
 
 		int index = 0;
-		while (true) {
+		while(true) {
 			String s = in.nextLine();
-			if (s.equals("-"))
-				break;
+			if(s.equals("-")) break;
 
-			for (int i = 0; i < s.length(); i++) {
+			for(int i = 0; i < s.length(); i++) {
 				array[index][s.charAt(i) - 'A']++;
 			}
 			index++;
 		}
 
-		while (true) {
+		while(true) {
 			String s = in.nextLine();
-			if (s.equals("#"))
-				break;
-			int[] save = new int[26];
+			if(s.equals("#")) break;
+			ArrayList<Alpha> list = new ArrayList<>();
 			int[] temp = new int[26];
-			for (int i = 0; i < s.length(); i++) {
+			for(int i = 0; i < s.length(); i++) {
 				temp[s.charAt(i) - 'A']++;
 			}
 
-			case1: for (int k = 0; k < index; k++) {
-				for (int z = 0; z < 26; z++) {
-					if (temp[z] < array[k][z])
-						continue case1;
+			for(int i = 0; i < s.length(); i++) {
+				int count = 0;
+				for(int j = 0; j < index; j++) {
+					if(array[j][s.charAt(i) - 'A'] == 0) continue;
+					boolean check = false;
+					for(int z = 0; z < 26; z++) {
+						if(array[j][z] > temp[z]) {
+							check = true;
+							break;
+						}
+					}
+					if(check) continue;
+					count++;
 				}
-				for (int z = 0; z < 26; z++) {
-					if (array[k][z] > 0)
-						save[z]++;
-				}
+				list.add(new Alpha(s.charAt(i), count));
 			}
 
-			int min = Integer.MAX_VALUE;
-			int max = Integer.MIN_VALUE;
-			for (int i = 0; i < 26; i++) {
-				if (save[i] != 0)
-					min = Math.min(min, save[i]);
-				if (save[i] == 0 && temp[i] > 0)
-					min = 0;
-				max = Math.max(max, save[i]);
+			Collections.sort(list);
+
+			int min = list.get(0).count;
+			int max = list.get(list.size()-1).count;
+			PriorityQueue<Character> minChar = new PriorityQueue<>();
+			Set<Character> minSet = new HashSet<>();
+			PriorityQueue<Character>  maxChar = new PriorityQueue<>();
+			Set<Character> maxSet = new HashSet<>();
+			minChar.add(list.get(0).alpha);
+			maxChar.add(list.get(list.size()-1).alpha);
+			minSet.add(list.get(0).alpha);
+			maxSet.add(list.get(list.size()-1).alpha);
+			for(int i = 1; i < list.size(); i++) {
+				if(min != list.get(i).count) break;
+				if(minSet.contains(list.get(i).alpha)) continue;
+				minChar.add(list.get(i).alpha);
+				minSet.add(list.get(i).alpha);
 			}
 
-			StringBuffer minChar = new StringBuffer();
-			StringBuffer maxChar = new StringBuffer();
-
-			for (int i = 0; i < 26; i++) {
-				if (min != 0 && min == save[i]) {
-					minChar.append((char) ('A' + i));
-				} else if (min == 0 && temp[i] > 0 && save[i] == 0)
-					minChar.append((char) (i + 'A'));
-
-				if (max == save[i] && temp[i] > 0) {
-					maxChar.append((char) ('A' + i));
-				}
+			for(int i = list.size()-2; i >= 0; i--) {
+				if(max != list.get(i).count) break;
+				if(maxSet.contains(list.get(i).alpha)) continue;
+				maxChar.add(list.get(i).alpha);
+				maxSet.add(list.get(i).alpha);
 			}
 
-			sb.append(minChar + " " + min + " " + maxChar + " " + max).append("\n");
+			while(!minChar.isEmpty()) {
+				sb.append(minChar.poll());
+			}
+			sb.append(" " + min + " ");
+			while(!maxChar.isEmpty()) {
+				sb.append(maxChar.poll());
+			}
+			sb.append(" " + max).append("\n");
 
 		}
 	}
