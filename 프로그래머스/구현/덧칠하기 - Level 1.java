@@ -12,7 +12,6 @@ class Solution {
                 end = section + (m-1);
                 answer++;
             }
-
         }
         return answer;
     }
