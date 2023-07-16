@@ -4,16 +4,15 @@ class Solution {
         int end = sections[0] + (m-1);
         int answer = 1;
 
-        for(int section : sections){
-            if(section >= start && section <= end)
+        for(int section : sections) {
+            if (section >= start && section <= end)
                 continue;
             else {
                 start = section;
-                end = section + (m-1);
+                end = section + (m - 1);
                 answer++;
             }
         }
-        
         return answer;
     }
 }
