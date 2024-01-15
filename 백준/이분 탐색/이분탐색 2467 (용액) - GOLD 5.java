@@ -1,59 +1,38 @@
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.io.*;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 public class Main {
-	static int N;
-	static int[] array;
-	static StringBuilder sb;
 
 	public static void main(String[] args) throws Exception {
-		SetData();
-		System.out.println(sb);
-	}
-
-	// ������
-	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
 
-		N = in.nextInt();
-		sb = new StringBuilder();
-		array = new int[N];
-		
-		for (int i = 0; i < N; i++) 
-			array[i] = in.nextInt();
-		
-		Arrays.sort(array);
-		TwoPointer(0, N - 1);
-	}
-	
-	private static void TwoPointer(int left, int right) {
-		int min = Integer.MAX_VALUE;
-		int acid = 0, alkaline = 0, sum;
-		
-		while (left < right) {
-			sum = array[left] + array[right];
+		int n = in.nextInt();
+		int[] arr = new int[n];
+		for(int i = 0; i < n; i++) arr[i] = in.nextInt();
 
-			if (min > Math.abs(sum)) {
-				min = Math.abs(sum);
-				acid = array[left];
-				alkaline = array[right];
+		int minimum = 2000000001;
+		int al=0, san=0;
+		int left = 0, right = n-1;
+		while(left < right) {
+			int sum = arr[left] + arr[right];
+			// 합이 이전 비교보다 0에 가까울 경우
+			if(Math.abs(sum) <= minimum) {
+				al = arr[left];
+				san = arr[right];
+				minimum = Math.abs(sum);
 			}
 
-			if (sum > 0)
+			if(Math.abs(arr[left]) <= Math.abs(arr[right])) {
 				right--;
-			else if(sum < 0)
+			} else {
 				left++;
-			else 
-				break;
+			}
 		}
-		
-		sb.append(acid + " " + alkaline);
+		System.out.println(al + " " + san);
 	}
 }
 
