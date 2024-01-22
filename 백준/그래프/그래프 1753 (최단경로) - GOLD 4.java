@@ -1,84 +1,78 @@
+import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 public class Main {
-	static int V,E,s;
-	static StringBuilder sb;
-	static ArrayList<Node>[] node;
-	static int[] dist;
+	static int v,e,s;
+	static List<Node>[] list;
+	static int[] distance;
 
 	public static void main(String[] args) throws Exception {
-		SetData();
+		InputReader in = new InputReader(System.in);
+
+		v = in.nextInt();
+		e = in.nextInt();
+		s = in.nextInt();
+		list = new ArrayList[v+1];
+		distance = new int[v+1];
+		for(int i = 1; i <= v; i++) {
+			list[i] = new ArrayList<Node>();
+			distance[i] = 200001;
+		}
+
+		for(int i = 0; i < e; i++) {
+			int s = in.nextInt();
+			int e = in.nextInt();
+			int w = in.nextInt();
+
+			list[s].add(new Node(e, w));
+		}
+
+		bfs();
+		StringBuilder sb = new StringBuilder();
+		for(int i = 1; i <= v; i++) {
+			if(i==s) sb.append("0");
+			else if(distance[i] != 200001) sb.append(distance[i]);
+			else sb.append("INF");
+			sb.append("\n");
+		}
+
 		System.out.println(sb);
 	}
 
-	// 데이터
-	private static void SetData() throws Exception {
-		InputReader in = new InputReader(System.in);
+	public static void bfs() {
+		PriorityQueue<Node> pq = new PriorityQueue<>();
+		pq.add(new Node(s, 0));
+		distance[s] = 0;
+		while(!pq.isEmpty()) {
+			Node node = pq.poll();
+			for(int i = 0; i < list[node.next].size(); i++) {
+				Node next = list[node.next].get(i);
 
-		V = in.nextInt();
-		E = in.nextInt();
-		s = in.nextInt();
-		sb = new StringBuilder();
-		node = new ArrayList[V + 1];
-		dist = new int[V + 1];
+				if(distance[next.next] <= distance[node.next] + next.distance) continue;
 
-		Arrays.fill(dist, 100000000);
-
-		for(int i = 1; i <= V; i++){
-			node[i] = new ArrayList<>();
-		}
-
-		for(int i = 0 ; i < E; i++){
-			int start = in.nextInt();
-			int end = in.nextInt();
-			int weight = in.nextInt();
-
-			node[start].add(new Node(end, weight));
-		}
-
-		dijkstra(s);
-
-		for(int i = 1; i <= V; i++){
-			if(dist[i] == 100000000) sb.append("INF\n");
-			else sb.append(dist[i] + "\n");
-		}
-	}
-
-	private static void dijkstra(int start){
-		PriorityQueue<Node> queue = new PriorityQueue<>();
-		boolean[] check = new boolean[V + 1];
-		queue.add(new Node(start, 0));
-		dist[start] = 0;
-
-		while(!queue.isEmpty()){
-			Node curNode = queue.poll();
-			int cur = curNode.e;
-
-			if(check[cur] == true) continue;
-			check[cur] = true;
-
-			for(Node node : node[cur]){
-				if(dist[node.e] > dist[cur] + node.w){
-					dist[node.e] = dist[cur] + node.w;
-					queue.add(new Node(node.e, dist[node.e]));
-				}
+				distance[next.next] = distance[node.next] + next.distance;
+				pq.add(new Node(next.next, node.distance+next.distance));
 			}
 		}
 	}
 }
 
 class Node implements Comparable<Node> {
-	int e;
-	int w;
+	int next;
+	int distance;
 
-	public Node(int e, int w) {
-		this.e = e;
-		this.w = w;
+	public Node(int next, int distance) {
+		this.next = next;
+		this.distance = distance;
 	}
 
 	@Override
-	public int compareTo(Node node) {
-		return this.w - node.w;
+	public int compareTo(Node o) {
+		return this.distance - o.distance;
 	}
 }
 
