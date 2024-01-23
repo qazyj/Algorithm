@@ -29,54 +29,27 @@ public class Main {
 			list[parent].add(i);
 		}
 		remove = in.nextInt();
-		removeNode(remove);
-		if(remove == root) {
-			System.out.println(0);
-		}else {
-			System.out.println(findLeaf(root));
+		if(remove != root) {
+			dfs(root);
 		}
+		System.out.println(answer);
 	}
 
-	static void removeNode(int node) {
-
-		// 해당 노드 자식노드 모두 조회
-		if(list[node].size()>0) {
-			int size = list[node].size();
-			while(size>0) {
-				int child = (int)list[node].get(--size);
-				removeNode(child);
-			}
+	public static void dfs(int cur) {
+		if(list[cur].size() == 0) {
+			answer++;
+			return;
+		}
+		if(list[cur].size() == 1 && (int)list[cur].get(0) == remove) {
+			answer++;
+			return;
 		}
 
-		// 해당 노드 자식 노드 모두 삭제
-		for(int i=0; i<n; i++) {
-			if(list[i].contains(node)) {
-				for(int j=0; j<list[i].size(); j++) {
-					if((int) list[i].get(j) == node) {
-						list[i].remove(j);
-					}
-				}
-			}
+		for(int i = 0; i < list[cur].size(); i++) {
+			int next = (int) list[cur].get(i);
+			if(next == remove) continue;
+			dfs(next);
 		}
-	}
-
-	static int findLeaf(int node) {
-		Queue<Integer> q = new LinkedList<>();
-		q.add(node);
-		int cnt=0;
-
-		while(!q.isEmpty()) {
-			int pos = q.poll();
-			if(list[pos].size()==0) {
-				cnt++; // 리프노드 count
-				continue;
-			}
-
-			for(int i = 0; i < list[pos].size(); i++) {
-				q.add((int)list[pos].get(i));
-			}
-		}
-		return cnt;
 	}
 }
 
