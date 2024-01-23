@@ -1,71 +1,85 @@
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 public class Main {
-	static int n, delete;
-	static int[] parent;
-	static int answer;
-	static boolean[] check;
+	static int answer, n, remove;
+	static List[] list;
 
 	public static void main(String[] args) throws Exception {
-		SetData();
-		System.out.println(answer);
-	}
-
-	// 데이터
-	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
 
 		n = in.nextInt();
-		parent = new int[n];
-		int root = 0;
-		for(int i = 0; i < n; i++) {
-			parent[i] = in.nextInt();
-			if(parent[i] == -1) root = i;
-		}
-		delete = in.nextInt();
-
-		deleteNode(delete);
-
+		list = new ArrayList[n];
 		answer = 0;
-		check = new boolean[n];
-		countLeaf(root);
+		int root = 0;
+		for(int i = 0 ; i < n; i++) {
+			list[i] = new ArrayList<Integer>();
+		}
+
+		for(int i = 0; i < n; i++) {
+			int parent = in.nextInt();
+			if(parent == -1) {
+				root = i;
+				continue;
+			}
+			list[parent].add(i);
+		}
+		remove = in.nextInt();
+		removeNode(remove);
+		if(remove == root) {
+			System.out.println(0);
+		}else {
+			System.out.println(findLeaf(root));
+		}
 	}
 
-	public static void deleteNode(int d) {
-		parent[d] = -2;
-		for(int i = 0; i < n; i++) {
-			if(parent[i] == d) {
-				deleteNode(i);
+	static void removeNode(int node) {
+
+		// 해당 노드 자식노드 모두 조회
+		if(list[node].size()>0) {
+			int size = list[node].size();
+			while(size>0) {
+				int child = (int)list[node].get(--size);
+				removeNode(child);
 			}
 		}
-	}
 
-	public static void countLeaf(int s) {
-		boolean isLeaf = true;
-		check[s] = true;
-		if(parent[s] != -2) {
-			for(int i = 0; i < n; i++) {
-				if(parent[i] == s && check[i] == false) {
-					countLeaf(i);
-					isLeaf = false;
+		// 해당 노드 자식 노드 모두 삭제
+		for(int i=0; i<n; i++) {
+			if(list[i].contains(node)) {
+				for(int j=0; j<list[i].size(); j++) {
+					if((int) list[i].get(j) == node) {
+						list[i].remove(j);
+					}
 				}
 			}
-			if(isLeaf) answer++;
 		}
 	}
-}
 
-class Node {
-	int x;
-	int y;
+	static int findLeaf(int node) {
+		Queue<Integer> q = new LinkedList<>();
+		q.add(node);
+		int cnt=0;
 
-	public Node(int x, int y) {
-		this.x = x;
-		this.y = y;
+		while(!q.isEmpty()) {
+			int pos = q.poll();
+			if(list[pos].size()==0) {
+				cnt++; // 리프노드 count
+				continue;
+			}
+
+			for(int i = 0; i < list[pos].size(); i++) {
+				q.add((int)list[pos].get(i));
+			}
+		}
+		return cnt;
 	}
 }
+
 
 class InputReader {
 	private final InputStream stream;
