@@ -1,62 +1,48 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
-public class Main {
-	static StringBuilder sb;
+public class Main {	public static void main(String[] args) throws Exception {
+	InputReader in = new InputReader(System.in);
 
-	public static void main(String[] args) throws Exception {
-		SetData();
-		System.out.println(sb);
-	}
-
-	private static void SetData() throws Exception {
-		InputReader in = new InputReader(System.in);
-
-		int N = in.nextInt();
-		sb = new StringBuilder();
-		PriorityQueue<Node> pq = new PriorityQueue<>();
-
-		while(N-->0) {
-			int input = in.nextInt();
-			if(input == 0) {
-				if(pq.size() == 0) {
-					// 큐가 비어있다면 0 출력
-					sb.append("0").append("\n");
-				} else {
-					// 큐가 비어있지 않다면 큐에 저장한 값 중 가장 작은 값 출력
-					sb.append(pq.poll().value).append("\n");
-				}
-				continue;
-			}
-
-			// 입력이 0이 아니라면 큐에 입력값과 절댓값 추가
-			int absoluteInput = Math.abs(input);
-			pq.add(new Node(input, absoluteInput));
+	int N = in.nextInt();
+	PriorityQueue<X> pq = new PriorityQueue<>();
+	StringBuilder sb = new StringBuilder();
+	while(N-->0) {
+		int x = in.nextInt();
+		if(x == 0) {
+			if(pq.isEmpty())
+				sb.append(0);
+			else
+				sb.append(pq.poll().value);
+			sb.append("\n");
+			continue;
 		}
+
+		pq.add(new X(x, Math.abs(x)));
 	}
+	System.out.println(sb);
+}
 }
 
-class Node implements Comparable<Node> {
+class X implements Comparable<X>{
 	int value;
-	int absoluteValue;
-
-	public Node(int value, int absoluteValue) {
+	int absValue;
+	public X(int value, int absValue){
 		this.value = value;
-		this.absoluteValue = absoluteValue;
+		this.absValue = absValue;
 	}
 
 	@Override
-	public int compareTo(Node o) {
-		// TODO Auto-generated method stub
-		// 절댓값 값이 같다면 입력값이 가장 작은 값
-		if(this.absoluteValue == o.absoluteValue) {
-			return this.value - o.value;
-		} else {
-			// 절댓값이 다르다면 절댓값으로 오름차순 정렬
-			return this.absoluteValue - o.absoluteValue;
-		}
+	public int compareTo(X x) {
+		if(x.absValue == this.absValue) return this.value - x.value;
+		return this.absValue - x.absValue;
 	}
 }
+
 
 class InputReader {
 	private final InputStream stream;
