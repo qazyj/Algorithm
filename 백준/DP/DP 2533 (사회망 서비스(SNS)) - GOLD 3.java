@@ -1,53 +1,57 @@
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 public class Main {
-	static int N, answer;
-	static ArrayList<Integer>[] array;
+	static int n;
+	static Node[] nodes;
+	static boolean[] visited;
 	static int[][] dp;
-	static boolean[] check;
 
 	public static void main(String[] args) throws Exception {
-		SetData();
-		System.out.println(answer);
-	}
-
-	private static void SetData()throws Exception {
 		InputReader in = new InputReader(System.in);
 
-		N = in.nextInt();
-		array = new ArrayList[N+1];
-		check = new boolean[N+1];
-		dp = new int[N+1][2];
-
-		for(int i = 1; i <= N; i++)
-			array[i] = new ArrayList<>();
-
-		for(int i = 1; i < N; i++) {
-			int a = in.nextInt();
-			int b = in.nextInt();
-			array[a].add(b);
-			array[b].add(a);
+		n = in.nextInt();
+		nodes = new Node[n+1];
+		visited = new boolean[n+1];
+		dp = new int[n+1][2];       // 0 : not al, 1 : al
+		for(int i = 1; i < n; i++) {
+			int x = in.nextInt();
+			int y = in.nextInt();
+			nodes[x] = new Node(y, nodes[x]);   // nodes[x]는 이전 연결되어있는 node를 넣어둠
+			nodes[y] = new Node(x, nodes[y]);
 		}
 
+		// 트리 구조이기 때문에 1부터 시작
 		dfs(1);
-		answer = Math.min(dp[1][0], dp[1][1]);
+		System.out.println(Math.min(dp[1][0], dp[1][1]));
 	}
 
-	private static void dfs(int index) {
-		check[index] = true;
-		dp[index][0] = 0;
-		dp[index][1] = 1;
+	private static void dfs(int number) {
+		visited[number] = true;
+		dp[number][0] = 0;      // not al
+		dp[number][1] = 1;      // al
 
-		for(int i = 0 ; i < array[index].size(); i++) {
-			int nextIndex = array[index].get(i);
-			if(check[nextIndex]) continue;
+		for(Node next = nodes[number]; next != null; next = next.next) {
+			if(visited[next.x]) continue;
 
-			dfs(nextIndex);
-			dp[index][0] += dp[nextIndex][1];
-			dp[index][1] += Math.min(dp[nextIndex][0], dp[nextIndex][1]);
+			dfs(next.x);
+			dp[number][0] += dp[next.x][1];	// 자식 노드가 무조건 얼리어답터여야한다.
+			dp[number][1] += Math.min(dp[next.x][0], dp[next.x][1]);	// 자식 노드가 얼리어답터 일수도 아닐수도 있다.
 		}
+	}
+}
+
+class Node {
+	int x;
+	Node next;
+
+	public Node(int x, Node next) {
+		this.x = x;
+		this.next = next;
 	}
 }
 
