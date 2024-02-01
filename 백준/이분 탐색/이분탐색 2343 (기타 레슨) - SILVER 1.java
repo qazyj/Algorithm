@@ -1,67 +1,41 @@
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
-	static int N, M, answer;
-	static int[] array;
 
 	public static void main(String[] args) throws Exception {
-		SetData();
-		System.out.println(answer);
-	}
-
-	// 데이터
-	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
 
-		N = in.nextInt();
-		M = in.nextInt();
-		array = new int[N];
+		int N = in.nextInt();
+		int M = in.nextInt();
+		int[] arr = new int[N];
 		int left = 0;
-		int right = 0;
-		for (int i = 0; i < N; i++) {
-			array[i] = in.nextInt();
-			left = Math.max(left, array[i]);
-			right += array[i];
+		int right =0;
+		for(int i=0; i<N; i++) {
+			arr[i] = in.nextInt();
+			left = (left < arr[i])? arr[i]:left;
+			right += arr[i];
 		}
 
-		while (left <= right) {
-			int mid = (left + right) / 2;
-
-			int tempSum = 0;
-			int count = 0;
-			for (int i = 0; i < N; i++) {
-				if (tempSum + array[i] > mid) {
-					tempSum = 0;
+		while(left <= right) {
+			int mid = (left + right)/2;
+			int sum =0;
+			int count =0;
+			for(int i=0; i<N; i++) {
+				if(sum + arr[i] > mid) {
 					count++;
+					sum =0;
 				}
-				tempSum += array[i];
+				sum = sum + arr[i];
 			}
-
-			if (tempSum != 0)
-				count++;
-
-			if (count <= M)
-				right = mid - 1;
-			else
-				left = mid + 1;
-
+			if(sum != 0) count++;
+			if(count > M) left = mid +1;
+			else right = mid -1;
 		}
-		answer = left;
-
-	}
-}
-
-class Order {
-	int time;
-	char color;
-	int count;
-
-	public Order(int time, char color, int count) {
-		this.time = time;
-		this.color = color;
-		this.count = count;
+		System.out.println(left);
 	}
 }
 
