@@ -5,20 +5,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
-	static int N, M, start, end, answer;
+	static int N, M, start, end;
+	static int[] distance;
 	static List<Node>[] lists;
+	static final int INF = 1000000001;
 
 	public static void main(String[] args) throws Exception {
 		InputReader in = new InputReader(System.in);
 
 		N = in.nextInt();
 		M = in.nextInt();
+		distance = new int[N+1];
 		lists = new ArrayList[N+1];
-		answer = 0;
 		for(int i = 1; i <= N; i++) lists[i] = new ArrayList<Node>();
-
-		int left = Integer.MAX_VALUE;
-		int right = Integer.MIN_VALUE;
+		// A, B, C
+		// 1 <= A,B <= N
+		// 1 <= C <= 10억
 		for(int i = 0; i < M; i++) {
 			int a = in.nextInt();
 			int b = in.nextInt();
@@ -26,50 +28,48 @@ public class Main {
 
 			lists[a].add(new Node(b,c));
 			lists[b].add(new Node(a,c));
-			left = Math.min(left, c);
-			right = Math.max(right, c);
 		}
 
 		start = in.nextInt();
 		end = in.nextInt();
 
-		while(left <= right) {
-			int middle = (left + right) / 2;
-			if(bfs(middle)) {
-				left = middle + 1;
-				answer = middle;
-			}
-			else right = middle - 1;
-		}
-		System.out.println(answer);
+		bfs();
+		System.out.println(distance[end]);
 	}
 
-	public static boolean bfs(int weight) {
-		Queue<Node> q = new LinkedList<>();
-		boolean[] visited = new boolean[N+1];
-		q.offer(new Node(start, 0));
-		while(!q.isEmpty()) {
-			Node node = q.poll();
-			if(node.next == end) return true;
+	public static void bfs() {
+		PriorityQueue<Node> pq = new PriorityQueue<>();
+		distance[start] = INF;
+		pq.add(new Node(start, INF));
+		while(!pq.isEmpty()) {
+			Node node = pq.poll();
+
+			if(distance[node.next] > node.weight) continue;
+
 			for(int i = 0; i < lists[node.next].size(); i++) {
 				Node next = lists[node.next].get(i);
-				if(weight <= next.weight && !visited[next.next]) {
-					visited[next.next] = true;
-					q.add(next);
-				}
+
+				if(distance[next.next] >= Math.min(node.weight, next.weight) ||
+						distance[end] >= Math.min(node.weight, next.weight)) continue;
+				distance[next.next] = Math.min(node.weight, next.weight);
+				pq.add(new Node(next.next, Math.min(node.weight, next.weight)));
 			}
 		}
-		return false;
 	}
 }
 
-class Node{
+class Node implements Comparable<Node>{
 	int next;
 	int weight;
 
 	public Node(int next,int weight) {
 		this.next = next;
 		this.weight = weight;
+	}
+
+	@Override
+	public int compareTo(Node o) {
+		return o.weight - this.weight;
 	}
 }
 
