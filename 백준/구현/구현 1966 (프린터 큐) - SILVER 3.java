@@ -1,64 +1,46 @@
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
 public class Main {
-	static int N, M;
-	static StringBuilder sb;
-	static int[] array;
 
 	public static void main(String[] args) throws Exception {
-		SetData();
-		System.out.println(sb);
-	}
-
-	// 데이터
-	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
 
 		int testcase = in.nextInt();
-		sb = new StringBuilder();
 
-		for (int i = 0; i < testcase; i++) {
-			N = in.nextInt();
-			M = in.nextInt();
+		StringBuilder sb = new StringBuilder();
+		while(testcase-->0) {
+			int n = in.nextInt();
+			int m = in.nextInt();
+
+			Queue<int[]> q = new LinkedList<>();
+			for(int i = 0; i < n; i++) {
+				q.add(new int[] {i, in.nextInt()});
+			}
+
 			int count = 0;
-			LinkedList<Node> queue = new LinkedList<>();
-			for (int j = 0; j < N; j++)
-				queue.add(new Node(j, in.nextInt()));
+			while(true) {
+				int[] cur = q.poll();
+				boolean check = false;
 
-			while (!queue.isEmpty()) {
-				Node first = queue.poll();
-				boolean max = true;
-				for (int j = 0; j < queue.size(); j++) {
-					if (first.weight < queue.get(j).weight) {
-						queue.offer(first);
-						for (int q = 0; q < j; q++) {
-							queue.offer(queue.poll());
-						}
-						max = false;
+				for(int[] curQ : q) {
+					if(curQ[1] > cur[1]) {
+						check = true;
 						break;
 					}
 				}
-				if (!max)
-					continue;
-				count++;
-				if (first.index == M)
-					break;
+
+				if (check) {
+					q.add(cur);
+				} else {
+					count++;
+					if(cur[0] == m) break;
+				}
 			}
 
 			sb.append(count).append("\n");
 		}
-	}
-}
-
-class Node {
-	int index;
-	int weight;
-
-	public Node(int index, int weight) {
-		this.index = index;
-		this.weight = weight;
+		System.out.println(sb);
 	}
 }
 
