@@ -1,56 +1,53 @@
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
 public class Main {
-	static int n, answer;
 
 	public static void main(String[] args) throws Exception {
-		SetData();
-		System.out.println(answer);
-	}
-
-	// 데이터
-	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
 
-		n = in.nextInt();
-		answer = 0;
-		PriorityQueue<Node> pq = new PriorityQueue<>();
-
+		PriorityQueue<Lecture> pq = new PriorityQueue<>();
+		int n = in.nextInt();
 		for(int i = 0; i < n; i++) {
-			pq.add(new Node(in.nextInt(), in.nextInt()));
+			int pay = in.nextInt();
+			int day = in.nextInt();
+
+			pq.add(new Lecture(pay, day));
 		}
 
-		boolean[] check = new boolean[10001];
-		while(!pq.isEmpty()){
-			Node node = pq.poll();
-			for(int i = node.day; i >= 1; i--){
-				if(!check[i]){
-					answer += node.pay;
-					check[i] = true;
-					break;
-				}
+		boolean[] checked = new boolean[10001];
+		int answer = 0;
+		while(!pq.isEmpty()) {
+			Lecture lecture = pq.poll();
+
+			for(int i = lecture.day; i > 0; i--) {
+				if(checked[i]) continue;
+
+				checked[i] = true;
+				answer += lecture.pay;
+				break;
 			}
 		}
+		System.out.println(answer);
 	}
 }
 
-class Node implements Comparable <Node>{
+class Lecture implements Comparable<Lecture> {
 	int day;
 	int pay;
 
-	public Node(int pay, int day) {
-		this.day = day;
+	public Lecture(int pay, int day) {
 		this.pay = pay;
+		this.day = day;
 	}
 
+
 	@Override
-	public int compareTo(Node o) {
-		if(this.pay == o.pay){
-			return o.day - this.day;
+	public int compareTo(Lecture o) {
+		if(o.pay != this.pay) {
+			return o.pay - this.pay;
 		}
-		return o.pay - this.pay;
+		return this.day - o.day;
 	}
 }
 
