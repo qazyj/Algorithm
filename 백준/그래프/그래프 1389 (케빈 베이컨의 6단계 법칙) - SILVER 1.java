@@ -1,63 +1,68 @@
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.sql.Array;
 import java.util.*;
 
 public class Main {
-	static int N, M, answer;
-	static int[][] array;
 
 	public static void main(String[] args) throws Exception {
-		SetData();
-		System.out.println(answer);
-	}
-
-	private static void SetData() throws Exception {
 		InputReader in = new InputReader(System.in);
 
-		N = in.nextInt();
-		M = in.nextInt();
-		array = new int[N+1][N+1];
-		answer = 0;
-
-		for(int i = 1; i <= N; i++) {
-			for(int j = 1; j <= N; j++) {
-				array[i][j] = 500000;
-
-				if(i == j) array[i][j] = 0;
-			}
+		int n = in.nextInt();
+		int m = in.nextInt();
+		List<Integer>[] list = new ArrayList[n+1];
+		for(int i = 1; i <= n; i++) list[i] = new ArrayList<>();
+		for(int i = 0; i < m; i++) {
+			int a = in.nextInt();
+			int b = in.nextInt();
+			list[a].add(b);
+			list[b].add(a);
 		}
 
-		for (int i = 0; i < M; i++) {
-			int x = in.nextInt();
-			int y = in.nextInt();
+		int answer = -1;
+		int max = 1000000;
+		for(int i = 1; i <= n; i++) {
+			int[] dis = new int[n+1];
+			Arrays.fill(dis, 100000);
+			PriorityQueue<Node> pq = new PriorityQueue<>();
+			dis[i] = 0;
+			pq.add(new Node(i, 0));
+			while(!pq.isEmpty()) {
+				Node node = pq.poll();
 
-			array[x][y] = array[y][x] = 1;
-		}
+				for(int next : list[node.cur]) {
+					if(dis[next] <= node.distance+1) continue;
 
-		for (int k = 1; k <= N; k++) {
-			for (int i = 1; i <= N; i++) {
-				for (int j = 1; j <= N; j++) {
-					if (array[i][j] > array[i][k] + array[k][j]) {
-						array[i][j] = array[i][k] + array[k][j];
-					}
+					dis[next] = node.distance+1;
+					pq.add(new Node(next, node.distance+1));
 				}
 			}
-		}
 
-		int result = 500000;
-		for (int i = 1; i <= N; i++) {
-			int total = 0;
-			for (int j = 1; j <= N; j++) {
-				total += array[i][j];
-			}
-
-			if (result > total) {
-				result = total;
+			int sum = 0;
+			for(int j = 1; j <= n; j++) sum += dis[j];
+			if(sum < max) {
+				max = sum;
 				answer = i;
 			}
 		}
+		System.out.println(answer);
 	}
 }
+
+class Node implements Comparable<Node> {
+	int cur;
+	int distance;
+
+	public Node(int cur, int distance) {
+		this.cur = cur;
+		this.distance = distance;
+	}
+
+	@Override
+	public int compareTo(Node o) {
+		return this.distance - o.distance;
+	}
+}
+
 
 class InputReader {
 	private final InputStream stream;
