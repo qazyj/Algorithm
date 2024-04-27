@@ -1,17 +1,24 @@
-import java.util.*;
-
 class Solution {
-    public int solution(int[][] data, int col, int row_begin, int row_end) {
-        int answer = 0;
-        Arrays.sort(data, ((o1, o2) -> o1[col - 1] != o2[col - 1] ? o1[col - 1] - o2[col - 1] : o2[0] - o1[0]));
+    public int[] solution(int[] sequence, int k) {
+        int[] answer = new int[]{0,1000001};
+        int start = 0;
+        int sum = sequence[0];
+        if(sum == k) return new int[]{0,0};
+        for(int i = 1; i < sequence.length; i++) {
+            sum += sequence[i];
 
-        for (int i = row_begin - 1; i <= row_end - 1; i++) {
-            int S_i = 0;
-            for (int d : data[i]) S_i += (d % (i + 1));
-
-            answer ^= S_i;
+            if(sum > k) {
+                while(sum > k) {
+                    sum -= sequence[start++];
+                }
+            }
+            if(sum == k) {
+                if(i - start < answer[1]-answer[0]) {
+                    answer[0] = start;
+                    answer[1] = i;
+                }
+            }
         }
-
         return answer;
     }
 }
