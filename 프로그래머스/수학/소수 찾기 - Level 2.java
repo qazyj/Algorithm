@@ -1,47 +1,35 @@
-import java.util.*;
+import java.util.HashSet;
 
 class Solution {
-    static boolean[] primes;
-    static boolean[] visited;
-    static Set<Integer> set;
-
     public int solution(String numbers) {
-        set = new HashSet<>();
-        primes = new boolean[10000001];
-        primes[0] = true;
-        primes[1] = true;
-        for(int i = 2; i < 10000001; i++) {
-            for(int j = i+i; j < 10000001; j+=i) {
-                if(primes[j]) continue;
-
-                primes[j] = true;
+        HashSet<Integer> set = new HashSet<>();
+        permutation("", numbers, set);
+        int count = 0;
+        while(set.iterator().hasNext()){
+            int a = set.iterator().next();
+            set.remove(a);
+            if(a==2) count++;
+            if(a%2!=0 && isPrime(a)){
+                count++;
             }
         }
-
-        visited = new boolean[numbers.length()];
-        backtracking(numbers, 0, "");
-
-        return set.size();
+        return count;
     }
 
-    public void backtracking(String number, int depth, String s) {
-        if(depth == number.length()) {
-            if(s.equals("")) return;
-            int realNumber = Integer.parseInt(s);
-            if(primes[realNumber]) return;
-            if(set.contains(realNumber)) return;
-
-            set.add(realNumber);
-            return;
+    public boolean isPrime(int n){
+        if(n==0 || n==1) return false;
+        for(int i=3; i<=(int)Math.sqrt(n); i+=2){
+            if(n%i==0) return false;
         }
-
-        backtracking(number, depth+1, s);
-        for(int i = 0; i < number.length(); i++) {
-            if(visited[i]) continue;
-
-            visited[i] = true;
-            backtracking(number, depth+1, s+number.charAt(i));
-            visited[i] = false;
-        }
+        return true;
     }
+
+    public void permutation(String prefix, String str, HashSet<Integer> set) {
+        int n = str.length();
+        if(!prefix.equals("")) set.add(Integer.valueOf(prefix));
+        for (int i = 0; i < n; i++)
+            permutation(prefix + str.charAt(i), str.substring(0, i) + str.substring(i+1, n), set);
+
+    }
+
 }
