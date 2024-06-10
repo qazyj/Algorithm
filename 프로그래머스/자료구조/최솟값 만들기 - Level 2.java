@@ -5,15 +5,11 @@ class Solution
     public int solution(int []A, int []B)
     {
         int answer = 0;
-        PriorityQueue<Integer> pA = new PriorityQueue<>();
-        PriorityQueue<Integer> pB = new PriorityQueue<>(Collections.reverseOrder());
+        Arrays.sort(A);
+        Arrays.sort(B);
+        int length = A.length-1;
         for(int i = 0; i < A.length; i++) {
-            pA.add(A[i]);
-            pB.add(B[i]);
-        }
-
-        while(!pA.isEmpty()) {
-            answer += (pA.poll()*pB.poll());
+            answer += A[i]*B[length-i];
         }
 
         return answer;
