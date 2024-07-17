@@ -11,6 +11,7 @@ class Solution {
             if (pq.size() > k) {
                 pq.poll();
             }
+            
             answer[i] = pq.peek();
         }
         return answer;
